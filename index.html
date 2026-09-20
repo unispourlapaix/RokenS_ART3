@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Formations d'escadron · Last War — RokenS ART3</title>
+<meta name="description" content="Squad formation planner for Last War: the leader takes the center, every teammate gets simple directions. FR · EN · 日本語 · ID">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Squad formations · Last War — RokenS ART3">
+<meta property="og:description" content="Build a squad around a leader and give every teammate their position simply. FR · EN · 日本語 · ID">
+<meta name="theme-color" content="#3d4a2f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==== E-MANUEL-20 · THÈME (couleurs claires / sombres) ==== */
+:root{
+  --bg:#e4e9d7;--panel:#f5f7ec;--ink:#1f261a;--muted:#55604a;--line:#c4cdb0;--cell:#dfe5cf;
+  --member:#4a5d34;--member-ink:#ffffff;--chef:#e79f00;--sel:#c8371f;--link:#7c8868;
+  --accent:#3d4a2f;--accent-ink:#ffffff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141a12;--panel:#1d2519;--ink:#e6ecd8;--muted:#a3ae92;--line:#334029;--cell:#252f20;
+    --member:#88a55c;--member-ink:#10170b;--chef:#f2b21a;--sel:#ff6a4d;--link:#7d8a6a;
+    --accent:#f2b21a;--accent-ink:#1a1400;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141a12;--panel:#1d2519;--ink:#e6ecd8;--muted:#a3ae92;--line:#334029;--cell:#252f20;
+  --member:#88a55c;--member-ink:#10170b;--chef:#f2b21a;--sel:#ff6a4d;--link:#7d8a6a;
+  --accent:#f2b21a;--accent-ink:#1a1400;
+}
+
+/* ==== E-MANUEL-21 · BASE & MISE EN PAGE ==== */
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+h1,h2,.badge,.sig{font-family:Rajdhani,"Arial Narrow",system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 14px 44px}
+h1{font-size:clamp(30px,7vw,42px);line-height:1.05;margin:0;font-weight:700;letter-spacing:.01em}
+.sub{margin:6px 0 16px;color:var(--muted)}
+.layout{display:grid;gap:14px}
+@media (min-width:860px){.layout{grid-template-columns:340px 1fr;align-items:start}.left{position:sticky;top:12px}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.panel+.panel{margin-top:14px}
+h2{font-size:21px;margin:0 0 8px;font-weight:700}
+.lbl{display:block;font-size:14px;color:var(--muted);margin:14px 0 6px}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--cell);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+textarea{resize:vertical}
+:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+.row{display:flex;gap:8px;align-items:center}
+.row .rank{width:76px;flex:none}
+.wrapbtn{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+/* ==== E-MANUEL-22 · BOUTONS & PASTILLES ==== */
+.btn{font:inherit;font-weight:600;color:var(--ink);background:var(--cell);border:1px solid var(--line);border-radius:10px;padding:8px 13px;min-height:44px;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.sq{width:44px;padding:0;font-size:22px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--cell);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:38px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.step{display:flex;gap:8px}
+.step input{width:92px;text-align:center;font-weight:700}
+.link{font:inherit;font-size:13px;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+
+/* ==== E-MANUEL-23 · CARTE (SVG) ==== */
+.mapbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px}
+#map{display:block;width:100%;height:auto;max-height:72vh;margin:0 auto}
+.gc{fill:var(--cell);stroke:var(--line);stroke-width:1}
+#map.free .gc{cursor:pointer}
+#map.free .gc:hover{fill:var(--line)}
+.lk{stroke:var(--link);stroke-width:2;stroke-dasharray:4 4;opacity:.85;pointer-events:none}
+.mb{cursor:pointer}
+.mb rect{fill:var(--member)}
+.mb text{fill:var(--member-ink);font-family:Rajdhani,system-ui,sans-serif;font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mb.on rect{stroke:var(--sel);stroke-width:3}
+.chef rect{fill:var(--chef)}
+.chef text{fill:#241a00;text-anchor:middle;dominant-baseline:central;font-family:Rajdhani,system-ui,sans-serif;font-weight:700;pointer-events:none}
+.chef .st{font-size:20px}.chef .rk{font-size:10px}
+
+/* ==== E-MANUEL-24 · FICHES COÉQUIPIERS ==== */
+.plan-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.card{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;background:var(--cell);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:8px;cursor:pointer}
+.card.on{border-color:var(--sel);box-shadow:0 0 0 2px var(--sel)}
+.card.chef{cursor:default;background:var(--panel);border-color:var(--chef)}
+.badge{flex:none;width:38px;height:38px;border-radius:9px;background:var(--member);color:var(--member-ink);display:grid;place-items:center;font-weight:700;font-size:19px}
+.card.chef .badge{background:var(--chef);color:#241a00}
+.body{flex:1;min-width:0;display:flex;flex-direction:column}
+.ins{color:var(--muted);font-size:14px}
+.sig{flex:none;font-size:23px;font-weight:700;white-space:nowrap}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
+#planTxt{min-height:160px;font-size:14px}
+
+.tabs{display:flex;gap:6px;margin:0 0 14px;border-bottom:2px solid var(--line)}
+.tab{font-family:Rajdhani,"Arial Narrow",system-ui,sans-serif;font-size:20px;font-weight:700;color:var(--muted);background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:8px 14px;min-height:44px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--chef)}
+.help{margin:0 0 14px}
+.help .lead{font-size:18px;line-height:1.45;font-weight:600;margin:0 0 14px}
+.help ol{margin:0 0 16px;padding-left:22px}
+.help li{margin:0 0 9px}
+.lang{margin-bottom:16px}
+
+/* ==== E-MANUEL-25 · MESSAGE FLASH ==== */
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="E-MANUEL-00-entete">
+    <h1 data-t="title">Formations d'escadron</h1>
+    <p class="sub" data-t="sub">Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.</p>
+    <div class="chips lang" id="langs" role="group" aria-label="Langue / Language"></div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab" role="tab" id="tabMake" aria-selected="true" aria-controls="viewMake" data-t="tabMake">Créer</button>
+    <button type="button" class="tab" role="tab" id="tabHelp" aria-selected="false" aria-controls="viewHelp" data-t="tabHelp">Comment ça marche ?</button>
+  </div>
+
+  <section class="panel help" id="viewHelp" role="tabpanel" aria-labelledby="tabHelp" hidden>
+    <p class="lead" data-t="helpLead"></p>
+    <ol id="helpList"></ol>
+    <button type="button" class="btn primary" id="goMake" data-t="goMake">Créer mon escadron</button>
+  </section>
+
+  <div class="layout" id="viewMake" role="tabpanel" aria-labelledby="tabMake">
+    <!-- ==== E-MANUEL-10 · RÉGLAGES ==== -->
+    <div class="left">
+      <section class="panel" id="E-MANUEL-10-reglages">
+        <h2 data-t="setup">Votre escadron</h2>
+        <span class="lbl" data-t="leaderL">Chef d'escadron et grade</span>
+        <div class="row">
+          <input id="leader" placeholder="Pseudo du chef" data-tp="leaderPh" maxlength="40" autocomplete="off">
+          <input id="rank" class="rank" placeholder="R4" maxlength="6" autocomplete="off">
+        </div>
+
+        <span class="lbl" data-t="shapeL">Forme à dessiner</span>
+        <div class="chips" id="shapes"></div>
+        <p class="hint" id="shapesHint" data-t="shapesHint"></p>
+        <span class="lbl" data-t="funL">Formes fun · 5 cases (chef + 4)</span>
+        <div class="chips" id="funShapes"></div>
+        <span class="lbl" data-t="heartL">Cœurs · taille fixe</span>
+        <div class="chips" id="heartShapes"></div>
+        <p class="hint" id="fixedInfo" hidden></p>
+
+        <div id="nBox">
+          <span class="lbl" data-t="nL">Nombre de coéquipiers (jusqu'à 500)</span>
+          <div class="step">
+            <button class="btn sq" id="nMinus" type="button" data-ta="nMinusA" aria-label="Un coéquipier de moins">−</button>
+            <input id="n" type="number" inputmode="numeric" min="1" max="500">
+            <button class="btn sq" id="nPlus" type="button" data-ta="nPlusA" aria-label="Un coéquipier de plus">+</button>
+          </div>
+        </div>
+
+        <div id="freeTools" hidden>
+          <span class="lbl" data-t="freeL">Dessin libre</span>
+          <div class="wrapbtn" style="margin-top:0">
+            <button class="btn" id="gMinus" type="button" data-t="gMinus">Grille −</button>
+            <button class="btn" id="gPlus" type="button" data-t="gPlus">Grille +</button>
+            <button class="btn" id="clear" type="button" data-t="clear">Tout vider</button>
+          </div>
+        </div>
+
+        <span class="lbl" data-t="namesL">Pseudos des coéquipiers (un par ligne, facultatif)</span>
+        <textarea id="names" rows="4" placeholder="Alpha&#10;Bravo&#10;Charlie"></textarea>
+        <p class="hint" id="nameInfo"></p>
+
+        <span class="lbl" data-t="refL">Comment chacun se repère ?</span>
+        <div class="chips" id="refs"></div>
+        <p class="hint" id="refHint"></p>
+
+        <div class="wrapbtn">
+          <button class="btn" id="rot" type="button" data-t="rot">↻ Pivoter</button>
+          <button class="btn" id="mir" type="button" data-t="mir">⇋ Miroir</button>
+          <button class="btn" id="edit" type="button" data-t="edit">✎ Modifier cette forme</button>
+          <button class="btn" id="reset" type="button" data-t="reset">Réinitialiser</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="right">
+      <!-- ==== E-MANUEL-11 · CARTE ==== -->
+      <section class="panel" id="E-MANUEL-11-carte">
+        <h2 data-t="mapH">La forme sur la carte</h2>
+        <div class="mapbox"><svg id="map" role="img" aria-label="Plan de la formation"></svg></div>
+        <p class="hint" id="mapHint"></p>
+      </section>
+
+      <!-- ==== E-MANUEL-12 · SIGNALÉTIQUE ==== -->
+      <section class="panel" id="E-MANUEL-12-plan">
+        <div class="plan-head">
+          <h2 id="planTitle" style="margin:0">Signalétique</h2>
+          <button class="btn primary" id="copy" type="button" data-t="copy">Copier le plan</button>
+        </div>
+        <p class="hint" style="margin:0 0 10px" data-t="planHint">Les directions sont celles que vous voyez sur l'écran du jeu. Le chef se place en premier, puis chacun dans l'ordre des numéros.</p>
+        <div id="cards"></div>
+        <details id="planBox">
+          <summary data-t="planBox">Voir le texte à coller dans le chat d'alliance</summary>
+          <textarea id="planTxt" readonly></textarea>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+<div id="toast" hidden></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   RokenS ART3 · Formations d'escadron (Last War)
+   Modules (chacun indépendant, on peut en ajouter sans casser les autres) :
+   E-MANUEL-01 état · 02 formes · 03 signalétique  (aucun accès au DOM)
+   E-MANUEL-04 carte · 05 fiches · 06 copie · 07 sauvegarde · 08 événements
+   ===================================================================== */
+
+/* ==== E-MANUEL-01 · ÉTAT ==== */
+const SHAPES=[
+  {id:'free',label:'✎ Libre'},
+  {id:'cross',label:'Croix +'},{id:'x',label:'Croix X'},{id:'star',label:'Étoile'},
+  {id:'block',label:'Bloc'},{id:'square',label:'Carré vide'},{id:'circle',label:'Cercle'},
+  {id:'diamond',label:'Losange'},{id:'v',label:'Flèche V'},{id:'tri',label:'Triangle'},
+  {id:'vline',label:'Ligne │'},{id:'hline',label:'Ligne ─'},
+  {id:'diag',label:'Diagonale'},
+  {id:'f_t',label:'Marteau'},{id:'f_u',label:'Fer à cheval'},{id:'f_w',label:'Escalier'},
+  {id:'f_z',label:'Éclair'},{id:'f_p',label:'Drapeau'},{id:'f_l',label:'Botte'},
+  {id:'f_v',label:'Coin'},{id:'f_y',label:'Lettre Y'},{id:'f_n',label:'Serpent'},{id:'f_f',label:'Lettre F'},
+  {id:'h_mini',label:'Mini cœur'},{id:'h_line',label:'Cœur contour'},{id:'h_fill',label:'Cœur plein'},
+  {id:'h_big',label:'Grand cœur plein'},{id:'h_bigline',label:'Grand cœur contour'}
+];
+const FUN=new Set(['f_t','f_u','f_w','f_z','f_p','f_l','f_v','f_y','f_n','f_f']); // formes fixes : 5 cases = chef + 4
+const HEARTS=['h_mini','h_line','h_fill','h_big','h_bigline'];   // cœurs dessinés à la main, taille fixe
+const FIXED=new Set([...FUN,...HEARTS]);
+const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le chef'}];
+const KEY='rokens-arte-last-war-v1';
+const clampN=n=>Math.min(500,Math.max(1,Math.round(+n)||1));
+const S={lang:'fr',tab:'make',leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1};
+
+/* ==== E-MANUEL-09 · LANGUES (fr · en · ja · id) — pour en ajouter une : copier un bloc, l'ajouter dans LANGS ==== */
+const LANGS=[{id:'fr',label:'Français'},{id:'en',label:'English'},{id:'ja',label:'日本語'},{id:'id',label:'Bahasa Indonesia'}];
+const L=()=>I18N[S.lang]||I18N.fr;
+function detectLang(){
+  const c=((navigator.languages&&navigator.languages[0])||navigator.language||'fr').slice(0,2).toLowerCase();
+  return {fr:'fr',en:'en',ja:'ja',id:'id','in':'id'}[c]||'en';
+}
+const I18N={
+fr:{
+ docTitle:"Formations d'escadron · Last War — RokenS ART3",
+ title:"Formations d'escadron",
+ sub:"Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.",
+ setup:"Votre escadron",leaderL:"Chef d'escadron et grade",leaderPh:"Pseudo du chef",
+ shapeL:"Forme à dessiner",nL:"Nombre de coéquipiers (jusqu'à 500)",
+ nMinusA:"Un coéquipier de moins",nPlusA:"Un coéquipier de plus",
+ freeL:"Dessin libre",gMinus:"Grille −",gPlus:"Grille +",clear:"Tout vider",
+ namesL:"Pseudos des coéquipiers (un par ligne, facultatif)",refL:"Comment chacun se repère ?",
+ rot:"↻ Pivoter",mir:"⇋ Miroir",edit:"✎ Modifier cette forme",reset:"Réinitialiser",
+ mapH:"La forme sur la carte",tabMake:"Créer",tabHelp:"Comment ça marche ?",goMake:"Créer mon escadron",helpLead:"Créez un escadron mené par un chef d'escadron et formez un groupe de coéquipiers rattachés à lui, à qui vous donnerez simplement leur position.",help:[
+  "<b>Choisissez votre chef</b> (pseudo + grade) : il se place en premier, sur la case ★ au centre.",
+  "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…). Les formes fun et les cœurs ont une taille fixe.",
+  "<b>Réglez le nombre de coéquipiers</b> et écrivez leurs pseudos (un par ligne, facultatif).",
+  "<b>Lisez la carte</b> : chaque rond numéroté est un coéquipier. Les traits pointillés montrent sur qui il se repère.",
+  "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↗2 veut dire 2 cases en diagonale. Les directions sont celles de l'écran du jeu.",
+  "<b>Envoyez le plan</b> : touchez « Copier le plan » et collez-le dans le chat d'alliance. Le chef se place d'abord, puis chacun dans l'ordre des numéros.",
+  "<b>Envie de votre propre forme ?</b> Choisissez ✎ Libre (ou « Modifier cette forme »), puis touchez les cases de la grille. ↻ Pivoter et ⇋ Miroir tournent ou retournent n'importe quelle forme."
+ ],funL:"Formes fun · 5 cases (chef + 4)",fixedInfo:t=>`Forme fixe : ${t} cases, le chef + ${t-1} coéquipiers. Pivotez-la ou retournez-la comme vous voulez.`,heartL:"Cœurs · taille fixe",shapesHint:"Seules les formes qui rentrent avec votre nombre de coéquipiers sont proposées. Essayez 4, 8, 12… pour en voir d'autres.",copy:"Copier le plan",
+ planHint:"Les directions sont celles que vous voyez sur l'écran du jeu. Le chef se place en premier, puis chacun dans l'ordre des numéros.",
+ planBox:"Voir le texte à coller dans le chat d'alliance",
+ hintFree:"Touchez une case vide pour ajouter un coéquipier, touchez un rond pour le retirer.",
+ hintMap:"Touchez un rond pour voir sa fiche. Les traits pointillés montrent sur qui chacun se repère.",
+ refNeighbor:"Chacun se repère sur quelqu'un déjà placé : c'est le plus simple à suivre.",
+ refLeader:"Tout le monde se repère uniquement sur le chef.",
+ chefIns:"Se place en premier, au centre de la forme.",
+ none:"Aucun coéquipier pour l'instant : ajoutez des cases sur la carte.",
+ toastOk:"Plan copié ✔",toastManual:"Sélectionnez le texte et copiez-le",
+ chef:"Chef",defName:i=>"Coéquipier "+i,
+ planH:n=>`Signalétique · ${n} coéquipier${n>1?'s':''}`,
+ nameInfo:(k,t)=>`${k} pseudo${k>1?'s':''} pour ${t} place${t>1?'s':''}.`+(k>t?` ${k-t} en trop.`:'')+(k<t?" Les autres s'appellent « Coéquipier N ».":''),
+ fit:k=>"Ajuster à "+k,
+ planHead:(s,name,rank,n)=>`🎖️ Formation ${s} — ${name} (${rank}) + ${n} coéquipiers`,
+ planFirst:name=>`1. ${name} se place en premier (centre)`,
+ planFoot:"(directions vues sur l'écran du jeu · RokenS ART3)",rankFallback:"chef",
+ shapes:{cross:'Croix +',x:'Croix X',star:'Étoile',block:'Bloc',square:'Carré vide',circle:'Cercle',diamond:'Losange',v:'Flèche V',tri:'Triangle',vline:'Ligne │',hline:'Ligne ─',diag:'Diagonale',free:'✎ Libre',f_t:'Marteau',f_u:'Fer à cheval',f_w:'Escalier',f_z:'Éclair',f_p:'Drapeau',f_l:'Botte',f_v:'Coin',f_y:'Lettre Y',f_n:'Serpent',f_f:'Lettre F',h_mini:'Mini cœur',h_line:'Cœur contour',h_fill:'Cœur plein',h_big:'Grand cœur plein',h_bigline:'Grand cœur contour'},
+ refs:{neighbor:'Sur un voisin',leader:'Sur le chef'},
+ desc:(dx,dy,ref)=>describe(dx,dy,ref)
+},
+en:{
+ docTitle:"Squad formations · Last War — RokenS ART3",
+ title:"Squad formations",
+ sub:"Last War · RokenS ART3 — the leader takes position, every teammate gets simple directions.",
+ setup:"Your squad",leaderL:"Squad leader and rank",leaderPh:"Leader name",
+ shapeL:"Shape to draw",nL:"Number of teammates (up to 500)",
+ nMinusA:"One teammate less",nPlusA:"One teammate more",
+ freeL:"Free drawing",gMinus:"Grid −",gPlus:"Grid +",clear:"Clear all",
+ namesL:"Teammate names (one per line, optional)",refL:"How does everyone find their spot?",
+ rot:"↻ Rotate",mir:"⇋ Mirror",edit:"✎ Edit this shape",reset:"Reset",
+ mapH:"The shape on the map",tabMake:"Create",tabHelp:"How does it work?",goMake:"Create my squad",helpLead:"Create a squad led by a squad leader and form a group of teammates attached to them, then give each one their position simply.",help:[
+  "<b>Pick your leader</b> (name + rank): they take position first, on the ★ cell in the center.",
+  "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…). Fun shapes and hearts have a fixed size.",
+  "<b>Set the number of teammates</b> and type their names (one per line, optional).",
+  "<b>Read the map</b>: each numbered circle is a teammate. Dotted lines show who they line up with.",
+  "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↗2 means 2 cells diagonally. Directions are the ones on the game screen.",
+  "<b>Share the plan</b>: tap “Copy plan” and paste it in the alliance chat. The leader goes first, then everyone in number order.",
+  "<b>Want your own shape?</b> Pick ✎ Free (or “Edit this shape”), then tap cells on the grid. ↻ Rotate and ⇋ Mirror turn or flip any shape."
+ ],funL:"Fun shapes · 5 cells (leader + 4)",fixedInfo:t=>`Fixed shape: ${t} cells, the leader + ${t-1} teammates. Rotate or flip it as you like.`,heartL:"Hearts · fixed size",shapesHint:"Only shapes that fit your number of teammates are shown. Try 4, 8, 12… to see more.",copy:"Copy plan",
+ planHint:"Directions are the ones you see on the game screen. The leader takes position first, then everyone in number order.",
+ planBox:"Show the text to paste into the alliance chat",
+ hintFree:"Tap an empty cell to add a teammate, tap a circle to remove it.",
+ hintMap:"Tap a circle to see its card. Dotted lines show who each person lines up with.",
+ refNeighbor:"Everyone lines up with someone already in place: the easiest to follow.",
+ refLeader:"Everyone lines up with the leader only.",
+ chefIns:"Takes position first, at the center of the shape.",
+ none:"No teammates yet: add cells on the map.",
+ toastOk:"Plan copied ✔",toastManual:"Select the text and copy it",
+ chef:"Leader",defName:i=>"Teammate "+i,
+ planH:n=>`Directions · ${n} teammate${n>1?'s':''}`,
+ nameInfo:(k,t)=>`${k} name${k>1?'s':''} for ${t} spot${t>1?'s':''}.`+(k>t?` ${k-t} too many.`:'')+(k<t?' The others are called "Teammate N".':''),
+ fit:k=>"Match to "+k,
+ planHead:(s,name,rank,n)=>`🎖️ ${s} formation — ${name} (${rank}) + ${n} teammates`,
+ planFirst:name=>`1. ${name} takes position first (center)`,
+ planFoot:"(directions as seen on the game screen · RokenS ART3)",rankFallback:"leader",
+ shapes:{cross:'Cross +',x:'Cross X',star:'Star',block:'Block',square:'Hollow square',circle:'Circle',diamond:'Diamond',v:'V arrow',tri:'Triangle',vline:'Line │',hline:'Line ─',diag:'Diagonal',free:'✎ Free',f_t:'Hammer',f_u:'Horseshoe',f_w:'Stairs',f_z:'Lightning',f_p:'Flag',f_l:'Boot',f_v:'Corner',f_y:'Letter Y',f_n:'Snake',f_f:'Letter F',h_mini:'Mini heart',h_line:'Heart outline',h_fill:'Solid heart',h_big:'Big solid heart',h_bigline:'Big heart outline'},
+ refs:{neighbor:'Relative to a neighbor',leader:'Relative to the leader'},
+ desc:(dx,dy,ref)=>{
+  const ax=Math.abs(dx),ay=Math.abs(dy),c=k=>k+(k>1?' cells':' cell');
+  if(!dx&&!dy)return 'on '+ref;
+  if(!dx)return `${c(ay)} ${dy<0?'above':'below'} ${ref}`;
+  if(!dy)return `${c(ax)} to the ${dx<0?'left':'right'} of ${ref}`;
+  const v=dy<0?'up':'down',h=dx<0?'left':'right';
+  if(ax===ay)return `${c(ax)} diagonally ${v}-${h} of ${ref}`;
+  return `${c(ay)} ${v}, ${c(ax)} ${h} of ${ref}`;
+ }
+},
+ja:{
+ docTitle:"部隊フォーメーション · Last War — RokenS ART3",
+ title:"部隊フォーメーション",
+ sub:"Last War · RokenS ART3 — リーダーが先に配置し、各メンバーに位置の指示が届きます。",
+ setup:"あなたの部隊",leaderL:"部隊リーダーとランク",leaderPh:"リーダー名",
+ shapeL:"作る形",nL:"メンバー数（最大500）",
+ nMinusA:"メンバーを1人減らす",nPlusA:"メンバーを1人増やす",
+ freeL:"自由描画",gMinus:"グリッド −",gPlus:"グリッド +",clear:"全消去",
+ namesL:"メンバー名（1行に1人、任意）",refL:"各自の位置の基準は？",
+ rot:"↻ 回転",mir:"⇋ 反転",edit:"✎ この形を編集",reset:"リセット",
+ mapH:"マップ上の形",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊リーダーが率いる部隊を作り、リーダーに付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
+  "<b>リーダーを決める</b>（名前とランク）：最初に、中央の★のマスに配置します。",
+  "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。おもしろ図形とハートはサイズ固定です。",
+  "<b>メンバー数を設定</b>し、名前を入力します（1行に1人、任意）。",
+  "<b>マップを見る</b>：番号つきの丸が各メンバーです。点線は、その人が基準にする相手を示します。",
+  "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↗2 は斜めに2マスという意味です。方向はゲーム画面で見えるとおりです。",
+  "<b>プランを共有</b>：「プランをコピー」を押して同盟チャットに貼り付けます。リーダーが先、その後は番号順です。",
+  "<b>自分だけの形を作りたい？</b> ✎ 自由（または「この形を編集」）を選び、グリッドのマスをタップします。↻ 回転と ⇋ 反転で、どの形も向きを変えられます。"
+ ],funL:"おもしろ図形 · 5マス（リーダー＋4人）",fixedInfo:t=>`固定の形：${t}マス（リーダー＋メンバー${t-1}人）。回転・反転できます。`,heartL:"ハート · サイズ固定",shapesHint:"メンバー数に合う形だけを表示しています。4、8、12…人にすると他の形も出ます。",copy:"プランをコピー",
+ planHint:"方向はゲーム画面で見えるとおりです。リーダーが最初に配置し、その後は番号順です。",
+ planBox:"同盟チャットに貼り付けるテキストを表示",
+ hintFree:"空きマスをタップでメンバー追加、丸をタップで削除します。",
+ hintMap:"丸をタップでカードを表示。点線は各メンバーの基準相手を示します。",
+ refNeighbor:"配置済みのメンバーを基準にするので、いちばん分かりやすい方法です。",
+ refLeader:"全員がリーダーだけを基準にします。",
+ chefIns:"最初に、形の中央に配置します。",
+ none:"メンバーがいません。マップ上でマスを追加してください。",
+ toastOk:"コピーしました ✔",toastManual:"テキストを選択してコピーしてください",
+ chef:"リーダー",defName:i=>"メンバー"+i,
+ planH:n=>`指示 · メンバー${n}人`,
+ nameInfo:(k,t)=>`${k}件の名前 / ${t}枠。`+(k>t?` ${k-t}件が余っています。`:'')+(k<t?' 残りは「メンバーN」になります。':''),
+ fit:k=>`${k}人に合わせる`,
+ planHead:(s,name,rank,n)=>`🎖️ フォーメーション「${s}」 — ${name}（${rank}）＋メンバー${n}人`,
+ planFirst:name=>`1. ${name} が最初に中央へ配置`,
+ planFoot:"（方向はゲーム画面上のもの · RokenS ART3）",rankFallback:"リーダー",
+ shapes:{cross:'十字 +',x:'X字',star:'星',block:'ブロック',square:'四角（枠）',circle:'円',diamond:'ひし形',v:'V字',tri:'三角',vline:'縦線 │',hline:'横線 ─',diag:'斜め線',free:'✎ 自由',f_t:'ハンマー',f_u:'馬蹄',f_w:'階段',f_z:'稲妻',f_p:'旗',f_l:'ブーツ',f_v:'角',f_y:'Y字',f_n:'ヘビ',f_f:'F字',h_mini:'ミニハート',h_line:'ハート（輪郭）',h_fill:'ハート（塗り）',h_big:'大きなハート（塗り）',h_bigline:'大きなハート（輪郭）'},
+ refs:{neighbor:'隣のメンバー基準',leader:'リーダー基準'},
+ desc:(dx,dy,ref)=>{
+  const ax=Math.abs(dx),ay=Math.abs(dy);
+  if(!dx&&!dy)return ref+'と同じ位置';
+  if(!dx)return `${ref}の${ay}マス${dy<0?'上':'下'}`;
+  if(!dy)return `${ref}の${ax}マス${dx<0?'左':'右'}`;
+  const v=dy<0?'上':'下',h=dx<0?'左':'右';
+  if(ax===ay)return `${ref}の${ax}マス斜め${h}${v}`;
+  return `${ref}の${v}${ay}マス・${h}${ax}マス`;
+ }
+},
+id:{
+ docTitle:"Formasi skuad · Last War — RokenS ART3",
+ title:"Formasi skuad",
+ sub:"Last War · RokenS ART3 — pemimpin menempati posisi lebih dulu, setiap anggota mendapat petunjuk sederhana.",
+ setup:"Skuadmu",leaderL:"Pemimpin skuad dan pangkat",leaderPh:"Nama pemimpin",
+ shapeL:"Bentuk yang dibuat",nL:"Jumlah anggota (maks. 500)",
+ nMinusA:"Kurangi satu anggota",nPlusA:"Tambah satu anggota",
+ freeL:"Gambar bebas",gMinus:"Grid −",gPlus:"Grid +",clear:"Hapus semua",
+ namesL:"Nama anggota (satu per baris, opsional)",refL:"Patokan posisi tiap anggota?",
+ rot:"↻ Putar",mir:"⇋ Cermin",edit:"✎ Ubah bentuk ini",reset:"Atur ulang",
+ mapH:"Bentuk di peta",tabMake:"Buat",tabHelp:"Cara pakai",goMake:"Buat skuadku",helpLead:"Buat skuad yang dipimpin seorang pemimpin skuad, lalu bentuk kelompok anggota yang terikat padanya, dan beri setiap anggota posisinya dengan mudah.",help:[
+  "<b>Pilih pemimpin</b> (nama + pangkat): dia menempati posisi lebih dulu, di kotak ★ di tengah.",
+  "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…). Bentuk seru dan hati berukuran tetap.",
+  "<b>Atur jumlah anggota</b> dan tulis nama mereka (satu per baris, opsional).",
+  "<b>Baca peta</b>: setiap lingkaran bernomor adalah satu anggota. Garis putus-putus menunjukkan patokan mereka.",
+  "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↗2 berarti 2 kotak secara diagonal. Arah sesuai layar game.",
+  "<b>Bagikan rencana</b>: ketuk “Salin rencana” lalu tempel di chat aliansi. Pemimpin lebih dulu, lalu semua sesuai nomor.",
+  "<b>Mau bentuk sendiri?</b> Pilih ✎ Bebas (atau “Ubah bentuk ini”), lalu ketuk kotak di grid. ↻ Putar dan ⇋ Cermin memutar atau membalik bentuk apa pun."
+ ],funL:"Bentuk seru · 5 kotak (pemimpin + 4)",fixedInfo:t=>`Bentuk tetap: ${t} kotak, pemimpin + ${t-1} anggota. Putar atau balik sesuka hati.`,heartL:"Hati · ukuran tetap",shapesHint:"Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan. Coba 4, 8, 12… untuk melihat lainnya.",copy:"Salin rencana",
+ planHint:"Arah sesuai yang terlihat di layar game. Pemimpin menempati posisi lebih dulu, lalu semua anggota sesuai nomor.",
+ planBox:"Lihat teks untuk ditempel di chat aliansi",
+ hintFree:"Ketuk kotak kosong untuk menambah anggota, ketuk lingkaran untuk menghapus.",
+ hintMap:"Ketuk lingkaran untuk melihat kartunya. Garis putus-putus menunjukkan patokan tiap anggota.",
+ refNeighbor:"Semua berpatokan pada anggota yang sudah menempati posisi: paling mudah diikuti.",
+ refLeader:"Semua hanya berpatokan pada pemimpin.",
+ chefIns:"Menempati posisi pertama, di tengah bentuk.",
+ none:"Belum ada anggota: tambahkan kotak di peta.",
+ toastOk:"Rencana disalin ✔",toastManual:"Pilih teksnya lalu salin",
+ chef:"Pemimpin",defName:i=>"Anggota "+i,
+ planH:n=>`Petunjuk · ${n} anggota`,
+ nameInfo:(k,t)=>`${k} nama untuk ${t} posisi.`+(k>t?` Kelebihan ${k-t} nama.`:'')+(k<t?' Sisanya bernama "Anggota N".':''),
+ fit:k=>"Sesuaikan ke "+k,
+ planHead:(s,name,rank,n)=>`🎖️ Formasi ${s} — ${name} (${rank}) + ${n} anggota`,
+ planFirst:name=>`1. ${name} menempati posisi pertama (tengah)`,
+ planFoot:"(arah sesuai layar game · RokenS ART3)",rankFallback:"pemimpin",
+ shapes:{cross:'Salib +',x:'Silang X',star:'Bintang',block:'Blok',square:'Persegi kosong',circle:'Lingkaran',diamond:'Belah ketupat',v:'Panah V',tri:'Segitiga',vline:'Garis │',hline:'Garis ─',diag:'Diagonal',free:'✎ Bebas',f_t:'Palu',f_u:'Tapal kuda',f_w:'Tangga',f_z:'Petir',f_p:'Bendera',f_l:'Sepatu bot',f_v:'Sudut',f_y:'Huruf Y',f_n:'Ular',f_f:'Huruf F',h_mini:'Hati mini',h_line:'Hati garis tepi',h_fill:'Hati penuh',h_big:'Hati besar penuh',h_bigline:'Hati besar garis tepi'},
+ refs:{neighbor:'Dari tetangga',leader:'Dari pemimpin'},
+ desc:(dx,dy,ref)=>{
+  const ax=Math.abs(dx),ay=Math.abs(dy),c=k=>k+' kotak';
+  if(!dx&&!dy)return 'di posisi '+ref;
+  if(!dx)return `${c(ay)} ${dy<0?'di atas':'di bawah'} ${ref}`;
+  if(!dy)return `${c(ax)} di sebelah ${dx<0?'kiri':'kanan'} ${ref}`;
+  const v=dy<0?'atas':'bawah',h=dx<0?'kiri':'kanan';
+  if(ax===ay)return `${c(ax)} diagonal ${h}-${v} dari ${ref}`;
+  return `${c(ay)} ke ${v}, ${c(ax)} ke ${h} dari ${ref}`;
+ }
+}
+};
+
+/* ==== E-MANUEL-02 · FORMES (offsets [x,y] autour du chef, x → droite, y → bas) ==== */
+const ang=([x,y])=>(Math.atan2(x,-y)+2*Math.PI)%(2*Math.PI);          // 0 = haut, sens horaire
+const cheb=([x,y])=>Math.max(Math.abs(x),Math.abs(y));
+const cellsWhere=(test,R)=>{const o=[];for(let y=-R;y<=R;y++)for(let x=-R;x<=R;x++)if((x||y)&&test(x,y))o.push([x,y]);return o;};
+const byAngle=c=>c.sort((a,b)=>ang(a)-ang(b));
+const sample=(a,n)=>a.length<=n?a:Array.from({length:n},(_,i)=>a[Math.floor(i*a.length/n)]);
+const radial=(dirs,n)=>Array.from({length:n},(_,i)=>{const d=dirs[i%dirs.length],k=Math.floor(i/dirs.length)+1;return [d[0]*k,d[1]*k];});
+const GEN={
+  cross:n=>radial([[0,-1],[1,0],[0,1],[-1,0]],n),
+  x:n=>radial([[-1,-1],[1,-1],[1,1],[-1,1]],n),
+  star:n=>radial([[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]],n),
+  vline:n=>radial([[0,-1],[0,1]],n),
+  hline:n=>radial([[-1,0],[1,0]],n),
+  diag:n=>radial([[1,-1],[-1,1]],n),
+  v:n=>radial([[-1,1],[1,1]],n),
+  block:n=>{let R=1;while((2*R+1)**2-1<n)R++;return cellsWhere(()=>true,R).sort((a,b)=>cheb(a)-cheb(b)||ang(a)-ang(b)).slice(0,n);},
+  tri:n=>{const o=[];for(let k=1;o.length<n;k++)for(let x=-k;x<=k&&o.length<n;x++)o.push([x,k]);return o;},
+  square:n=>{const r=Math.max(1,Math.ceil(n/8));return sample(byAngle(cellsWhere((x,y)=>cheb([x,y])===r,r)),n);},
+  diamond:n=>{const r=Math.max(1,Math.ceil(n/4));return sample(byAngle(cellsWhere((x,y)=>Math.abs(x)+Math.abs(y)===r,r)),n);},
+  circle:n=>{for(let r=1;;r++){const c=cellsWhere((x,y)=>Math.abs(Math.hypot(x,y)-r)<0.5,r+1);if(c.length>=n)return sample(byAngle(c),n);}},
+};
+const FIX={
+  f_t:[[-1,0],[1,0],[0,1],[0,2]],   f_u:[[-1,-1],[-1,0],[1,0],[1,-1]],
+  f_w:[[-1,-1],[-1,0],[0,1],[1,1]], f_z:[[-1,-1],[0,-1],[0,1],[1,1]],
+  f_p:[[1,0],[0,1],[1,1],[0,2]],    f_l:[[0,-1],[0,-2],[0,-3],[1,0]],
+  f_v:[[0,-1],[0,-2],[1,0],[2,0]],  f_y:[[0,-1],[0,1],[0,2],[1,0]],
+  f_n:[[0,-1],[1,0],[1,1],[1,2]],   f_f:[[0,-1],[1,-1],[-1,0],[0,1]]
+};
+for(const k in FIX)GEN[k]=()=>FIX[k].map(c=>c.slice());
+const HEART_ASCII={
+  h_mini:['X.X','XCX','.X.'],
+  h_line:['.XX.XX.','X..X..X','X..C..X','.X...X.','..X.X..','...X...'],
+  h_fill:['.X.X.','XXXXX','XXCXX','.XXX.','..X..'],
+  h_big:['.XXX.XXX.','XXXXXXXXX','XXXXXXXXX','XXXXCXXXX','.XXXXXXX.','..XXXXX..','...XXX...','....X....']
+};
+const hollow=rows=>{
+  const f=(x,y)=>{const r=rows[y];return !!r&&(r[x]==='X'||r[x]==='C');};
+  return rows.map((r,y)=>[...r].map((ch,x)=>ch==='X'&&f(x-1,y)&&f(x+1,y)&&f(x,y-1)&&f(x,y+1)?'.':ch).join(''));
+};
+HEART_ASCII.h_bigline=hollow(HEART_ASCII.h_big);
+function parsePat(rows){                       // X = coéquipier, C = chef
+  const out=[];let c=[0,0];
+  rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='C')c=[x,y];}));
+  rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='X')out.push([x-c[0],y-c[1]]);}));
+  return out;
+}
+const HCOUNT={};
+for(const k in HEART_ASCII){GEN[k]=()=>parsePat(HEART_ASCII[k]);HCOUNT[k]=parsePat(HEART_ASCII[k]).length+1;}
+const RULE={   // n = nombre de coéquipiers ; une forme n'est proposée que si elle est complète et symétrique
+  cross:n=>n>=4&&n%4===0, x:n=>n>=4&&n%4===0, star:n=>n>=8&&n%8===0,
+  vline:n=>n>=1, hline:n=>n>=1, diag:n=>n>=1, v:n=>n>=2&&n%2===0,
+  block:n=>{const r=Math.sqrt(n+1);return n>=8&&Number.isInteger(r)&&r%2===1;},
+  square:n=>n>=8&&n%8===0, diamond:n=>n>=8&&n%4===0, circle:n=>n>=12&&n%4===0,
+  tri:n=>n>=3&&Number.isInteger(Math.sqrt(n+1))
+};
+const shapeOk=(id,n)=>id==='free'||FIXED.has(id)||(RULE[id]?RULE[id](n):false);
+const cur=()=>shapeOk(S.shape,S.n)?S.shape:(SHAPES.find(x=>x.id!=='free'&&!FIXED.has(x.id)&&shapeOk(x.id,S.n))||{id:'vline'}).id;
+function baseCells(){
+  if(S.shape==='free')return S.free.map(c=>c.slice());
+  let c=(GEN[cur()]||GEN.cross)(S.n);
+  if(S.mirror)c=c.map(([x,y])=>[-x,y]);
+  for(let i=0;i<S.rot;i++)c=c.map(([x,y])=>[-y,x]);
+  return c;
+}
+
+/* ==== E-MANUEL-03 · SIGNALÉTIQUE (qui se place où, par rapport à qui) ==== */
+const cases=k=>k+(k>1?' cases':' case');
+function describe(dx,dy,ref){
+  const ax=Math.abs(dx),ay=Math.abs(dy);
+  if(!dx&&!dy)return 'sur '+ref;
+  if(!dx)return `${cases(ay)} ${dy<0?'au-dessus de':'en dessous de'} ${ref}`;
+  if(!dy)return `${cases(ax)} à ${dx<0?'gauche':'droite'} de ${ref}`;
+  const v=dy<0?'haut':'bas',h=dx<0?'gauche':'droite';
+  if(ax===ay)return `${cases(ax)} en diagonale ${v}-${h} de ${ref}`;
+  return `${cases(ay)} en ${v}, ${cases(ax)} à ${h} de ${ref}`;
+}
+function signal(dx,dy){
+  const ax=Math.abs(dx),ay=Math.abs(dy),A=dx<0?'←':'→',V=dy<0?'↑':'↓';
+  if(!dx)return V+ay;
+  if(!dy)return A+ax;
+  if(ax===ay)return (dy<0?(dx<0?'↖':'↗'):(dx<0?'↙':'↘'))+ax;
+  return V+ay+' '+A+ax;
+}
+function pickRef(placed,x,y){
+  let best=placed[0],bs=Infinity;
+  for(const p of placed){
+    const dx=x-p.x,dy=y-p.y,d=Math.max(Math.abs(dx),Math.abs(dy)),man=Math.abs(dx)+Math.abs(dy);
+    const aligned=!dx||!dy||Math.abs(dx)===Math.abs(dy);
+    const score=(aligned?0:1000)+d*10+(dx&&dy?0.5:0)+man*0.01;
+    if(score<bs){bs=score;best=p;}
+  }
+  return best;
+}
+function buildPlan(){
+  const cells=baseCells().sort((a,b)=>cheb(a)-cheb(b)||ang(a)-ang(b));
+  const names=(S.names||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const chef={name:S.leader||L().chef,x:0,y:0,i:-1};
+  const placed=[chef];
+  const members=cells.map(([x,y],i)=>{
+    const ref=S.ref==='leader'?chef:pickRef(placed,x,y);
+    const m={i,name:names[i]||L().defName(i+1),x,y,ref,dx:x-ref.x,dy:y-ref.y};
+    m.text=L().desc(m.dx,m.dy,ref.name);
+    m.sig=signal(m.dx,m.dy);
+    placed.push(m);
+    return m;
+  });
+  return {chef,members,names};
+}
+function planText(plan){
+  const l=L();
+  let t=l.planHead(l.shapes[cur()],plan.chef.name,S.rank||l.rankFallback,plan.members.length)+'\n';
+  t+=l.planFirst(plan.chef.name)+'\n';
+  plan.members.forEach((m,k)=>{t+=`${k+2}. ${m.name} : ${m.text} [${m.sig}]\n`;});
+  return t+l.planFoot;
+}
+/*@@FIN-MODULES-SANS-DOM@@*/
+
+/* ==== E-MANUEL-04 · CARTE ==== */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderMap(plan){
+  const free=S.shape==='free',U=40,svg=$('map');
+  let a=0,b=0,c=0,d=0;
+  for(const m of plan.members){a=Math.min(a,m.x);b=Math.max(b,m.x);c=Math.min(c,m.y);d=Math.max(d,m.y);}
+  if(free){a=Math.min(a,-S.freeR);b=Math.max(b,S.freeR);c=Math.min(c,-S.freeR);d=Math.max(d,S.freeR);}
+  else{a--;b++;c--;d++;}
+  const W=(b-a+1)*U,H=(d-c+1)*U,X=x=>(x-a)*U,Y=y=>(y-c)*U,cx=x=>X(x)+U/2,cy=y=>Y(y)+U/2;
+  let o='';
+  for(let y=c;y<=d;y++)for(let x=a;x<=b;x++)o+=`<rect class="gc" x="${X(x)+1}" y="${Y(y)+1}" width="${U-2}" height="${U-2}" rx="5" data-x="${x}" data-y="${y}"/>`;
+  for(const m of plan.members)o+=`<line class="lk" x1="${cx(m.ref.x)}" y1="${cy(m.ref.y)}" x2="${cx(m.x)}" y2="${cy(m.y)}"/>`;
+  for(const m of plan.members){
+    const fs=m.i>=99?11:15;
+    o+=`<g class="mb${S.sel===m.i?' on':''}" data-i="${m.i}" data-x="${m.x}" data-y="${m.y}"><rect x="${X(m.x)+3}" y="${Y(m.y)+3}" width="${U-6}" height="${U-6}" rx="8"/><text x="${cx(m.x)}" y="${cy(m.y)}" style="font-size:${fs}px">${m.i+1}</text></g>`;
+  }
+  o+=`<g class="chef"><rect x="${X(0)+2}" y="${Y(0)+2}" width="${U-4}" height="${U-4}" rx="8"/><text class="st" x="${cx(0)}" y="${cy(0)-4}">★</text><text class="rk" x="${cx(0)}" y="${cy(0)+11}">${esc(S.rank||'')}</text></g>`;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.style.maxWidth=Math.max(W*2.2,280)+'px';
+  svg.classList.toggle('free',free);
+  svg.innerHTML=o;
+  $('mapHint').textContent=free?L().hintFree:L().hintMap;
+}
+
+/* ==== E-MANUEL-05 · FICHES COÉQUIPIERS ==== */
+function renderCards(plan){
+  const n=plan.members.length;
+  $('planTitle').textContent=L().planH(n);
+  let h=`<div class="card chef"><span class="badge">★</span><span class="body"><b>${esc(plan.chef.name)}${S.rank?' ('+esc(S.rank)+')':''}</b><span class="ins">${esc(L().chefIns)}</span></span></div>`;
+  if(!n)h+=`<p class="hint">${esc(L().none)}</p>`;
+  for(const m of plan.members){
+    h+=`<button type="button" class="card${S.sel===m.i?' on':''}" id="c${m.i}" data-i="${m.i}"><span class="badge">${m.i+1}</span><span class="body"><b>${esc(m.name)}</b><span class="ins">${esc(m.text)}</span></span><span class="sig">${esc(m.sig)}</span></button>`;
+  }
+  $('cards').innerHTML=h;
+}
+function chips(el,items,cur,attr){
+  el.innerHTML=items.map(it=>`<button type="button" class="chip" data-${attr}="${it.id}" aria-pressed="${it.id===cur}">${it.label}</button>`).join('');
+}
+function renderControls(plan){
+  const free=S.shape==='free',l=L();
+  chips($('langs'),LANGS,S.lang,'lang');
+  const fixed=FIXED.has(S.shape),cs=cur();
+  chips($('shapes'),SHAPES.filter(x=>!FIXED.has(x.id)&&shapeOk(x.id,S.n)).map(x=>({id:x.id,label:l.shapes[x.id]})),cs,'shape');
+  chips($('funShapes'),SHAPES.filter(x=>FUN.has(x.id)).map(x=>({id:x.id,label:l.shapes[x.id]})),cs,'shape');
+  chips($('heartShapes'),HEARTS.map(id=>({id,label:l.shapes[id]+' · '+HCOUNT[id]})),cs,'shape');
+  $('fixedInfo').hidden=!fixed;$('fixedInfo').textContent=fixed?l.fixedInfo(plan.members.length+1):'';
+  $('shapesHint').hidden=free||fixed;
+  chips($('refs'),REFS.map(x=>({id:x.id,label:l.refs[x.id]})),S.ref,'ref');
+  $('refHint').textContent=S.ref==='leader'?l.refLeader:l.refNeighbor;
+  $('nBox').hidden=free||fixed;
+  $('freeTools').hidden=!free;
+  $('edit').hidden=free;
+  if(document.activeElement!==$('n'))$('n').value=S.n;
+  const k=plan.names.length,total=plan.members.length;
+  $('nameInfo').innerHTML=(k?esc(l.nameInfo(k,total)):'')+(k&&!free&&!fixed&&k!==S.n?' <button type="button" class="link" id="fitNames">'+esc(l.fit(k))+'</button>':'');
+}
+
+/* ==== E-MANUEL-06 · COPIE DU PLAN ==== */
+let toastT=0;
+function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},2600);}
+async function copyPlan(){
+  const t=planText(buildPlan()),ta=$('planTxt');
+  ta.value=t;
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true;}
+  catch(e){try{$('planBox').open=true;ta.focus();ta.select();ok=document.execCommand('copy');}catch(e2){ok=false;}}
+  if(ok)toast(L().toastOk);
+  else{$('planBox').open=true;toast(L().toastManual);}
+}
+
+/* ==== E-MANUEL-07 · SAUVEGARDE LOCALE (confort, ce navigateur uniquement) ==== */
+function save(){try{localStorage.setItem(KEY,JSON.stringify(Object.assign({},S,{sel:-1})));}catch(e){}}
+function load(){
+  try{
+    const r=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(!r||typeof r!=='object')return;
+    if(typeof r.leader==='string')S.leader=r.leader.slice(0,40);
+    if(typeof r.rank==='string')S.rank=r.rank.slice(0,6);
+    if(SHAPES.some(s=>s.id===r.shape))S.shape=r.shape;
+    S.n=clampN(r.n);
+    if(typeof r.names==='string')S.names=r.names.slice(0,20000);
+    S.rot=(((+r.rot||0)%4)+4)%4;
+    S.mirror=!!r.mirror;
+    if(REFS.some(s=>s.id===r.ref))S.ref=r.ref;
+    if(LANGS.some(s=>s.id===r.lang))S.lang=r.lang;
+    if(Array.isArray(r.free))S.free=r.free.filter(p=>Array.isArray(p)&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&(p[0]||p[1])&&Math.abs(p[0])<=60&&Math.abs(p[1])<=60).slice(0,500);
+    S.freeR=Math.min(40,Math.max(3,Math.round(+r.freeR)||6));
+  }catch(e){}
+}
+
+/* ==== E-MANUEL-08 · ÉVÉNEMENTS ==== */
+function applyStatic(){
+  const l=L();
+  document.documentElement.lang=S.lang;document.title=l.docTitle;
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=l[e.dataset.t];});
+  document.querySelectorAll('[data-tp]').forEach(e=>{e.placeholder=l[e.dataset.tp];});
+  document.querySelectorAll('[data-ta]').forEach(e=>{e.setAttribute('aria-label',l[e.dataset.ta]);});
+  $('helpList').innerHTML=l.help.map(t=>`<li>${t}</li>`).join('');
+}
+function render(){
+  applyStatic();
+  const plan=buildPlan();
+  renderMap(plan);renderCards(plan);renderControls(plan);
+  $('planTxt').value=planText(plan);
+  save();
+}
+const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+function init(){
+  S.lang=detectLang();
+  load();
+  $('leader').value=S.leader;$('rank').value=S.rank;$('names').value=S.names;
+  const setTab=t=>{
+    S.tab=t;$('viewMake').hidden=t!=='make';$('viewHelp').hidden=t!=='help';
+    $('tabMake').setAttribute('aria-selected',String(t==='make'));$('tabHelp').setAttribute('aria-selected',String(t==='help'));
+    window.scrollTo(0,0);
+  };
+  $('tabMake').onclick=()=>setTab('make');$('tabHelp').onclick=()=>setTab('help');$('goMake').onclick=()=>setTab('make');
+  setTab('make');
+  $('leader').addEventListener('input',e=>{S.leader=e.target.value;render();});
+  $('rank').addEventListener('input',e=>{S.rank=e.target.value;render();});
+  $('names').addEventListener('input',e=>{S.names=e.target.value;render();});
+  $('n').addEventListener('input',e=>{if(e.target.value==='')return;S.n=clampN(e.target.value);S.sel=-1;render();});
+  $('n').addEventListener('blur',()=>{$('n').value=S.n;});
+  $('nMinus').onclick=()=>{S.n=clampN(S.n-1);S.sel=-1;render();};
+  $('nPlus').onclick=()=>{S.n=clampN(S.n+1);S.sel=-1;render();};
+  ['shapes','funShapes','heartShapes'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('[data-shape]');if(!b)return;S.shape=b.dataset.shape;S.sel=-1;render();}));
+  $('refs').addEventListener('click',e=>{const b=e.target.closest('[data-ref]');if(!b)return;S.ref=b.dataset.ref;render();});
+  $('langs').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(!b)return;S.lang=b.dataset.lang;render();});
+  $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames'){S.n=clampN(buildPlan().names.length);S.sel=-1;render();}});
+  $('rot').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-y,x]);else S.rot=(S.rot+1)%4;S.sel=-1;render();};
+  $('mir').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-x,y]);else S.mirror=!S.mirror;S.sel=-1;render();};
+  $('edit').onclick=()=>{
+    const c=baseCells();
+    S.free=c;S.shape='free';S.sel=-1;
+    S.freeR=Math.min(40,Math.max(6,Math.max(...c.map(cheb))+1));
+    render();
+  };
+  $('clear').onclick=()=>{S.free=[];S.sel=-1;render();};
+  $('gMinus').onclick=()=>{S.freeR=Math.max(3,S.freeR-1);render();};
+  $('gPlus').onclick=()=>{S.freeR=Math.min(40,S.freeR+1);render();};
+  $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1});$('leader').value=S.leader;$('rank').value=S.rank;$('names').value='';render();};
+  $('copy').onclick=copyPlan;
+  $('map').addEventListener('click',e=>{
+    const g=e.target.closest('[data-x]');
+    if(!g)return;
+    const x=+g.dataset.x,y=+g.dataset.y;
+    if(S.shape==='free'){
+      if(!x&&!y)return;
+      const k=S.free.findIndex(p=>p[0]===x&&p[1]===y);
+      if(k>=0)S.free.splice(k,1);else S.free.push([x,y]);
+      S.sel=-1;render();
+    }else if(g.dataset.i!==undefined){
+      S.sel=+g.dataset.i;render();
+      const el=$('c'+S.sel);if(el)el.scrollIntoView({block:'nearest',behavior:smooth()});
+    }
+  });
+  $('cards').addEventListener('click',e=>{
+    const b=e.target.closest('[data-i]');
+    if(!b)return;
+    const i=+b.dataset.i;S.sel=S.sel===i?-1:i;render();
+  });
+  render();
+}
+init();
+</script>
+</body>
+</html>
