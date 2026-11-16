@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Squad formations · Last War — RokenS ART3">
 <meta property="og:description" content="Build a squad around a leader and give every teammate their position simply. FR · EN · 日本語 · ID">
-<meta name="theme-color" content="#3d4a2f">
+<meta name="theme-color" content="#18221e">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -106,6 +106,48 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
 
 /* ==== E-MANUEL-25 · MESSAGE FLASH ==== */
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:9}
+/* ==== E-MANUEL-26 · HABILLAGE PIXEL ART ==== */
+:root{--pixel-shadow:#a9b39b;--map-bed:#222d26;--map-tile:#354436;--map-alt:#3b4b3c;--map-line:#202c23;--tile-edge:#728d56}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pixel-shadow:#090e0a}}
+:root[data-theme="dark"]{--pixel-shadow:#090e0a}
+body{background-image:repeating-linear-gradient(0deg,transparent 0 31px,var(--line) 31px 32px),repeating-linear-gradient(90deg,transparent 0 31px,var(--line) 31px 32px)}
+header{background:#18221e;color:#f5f5e5;padding:20px 22px 16px;margin:0 0 18px;border:2px solid #718365;border-left:6px solid #e7ab32;box-shadow:4px 4px 0 var(--pixel-shadow)}
+header .sub{color:#c6d3ad}
+header .lang{margin-bottom:0}
+header .chip{background:#27372c;color:#e3ead6;border-color:#718365}
+header .chip[aria-pressed="true"]{background:#e7ab32;color:#18221e}
+.panel,.mapbox,.btn,.chip,.card,.badge,input,textarea,#toast{border-radius:0}
+.panel{border-width:2px;box-shadow:3px 3px 0 var(--pixel-shadow)}
+.btn,.chip{border-width:2px}
+.btn:hover:not(:disabled),.chip:hover{border-color:var(--sel)}
+.btn:disabled{opacity:.55;cursor:default}
+.mapbox{background:var(--map-bed);border:3px solid #718365;padding:8px}
+.gc{fill:var(--map-tile);stroke:var(--map-line);shape-rendering:crispEdges}
+.gc.alt{fill:var(--map-alt)}
+#map.free .gc:hover,#map.placing .gc:hover{fill:#566c48}
+#map.placing .gc{cursor:crosshair}
+.lk{stroke:#a7b58b}
+.mb .token{fill:#263b23;stroke:var(--tile-edge);stroke-width:2}
+.mb .shine{fill:#a5bb79;pointer-events:none}
+.mb text{fill:#f6f8ec;font-family:ui-monospace,monospace}
+.mb.on .token{stroke:#ffd366;stroke-width:3}
+.chef .token{fill:#e7ab32;stroke:#ffe5a3;stroke-width:2}
+.token,.shine{shape-rendering:crispEdges}
+#mapHint{margin-top:10px}
+#placementActions{margin-top:8px}
+.card .body{overflow-wrap:anywhere}
+html[lang="ja"]{--jp-font:"Hiragino Sans","Yu Gothic UI",Meiryo,"Noto Sans CJK JP","Noto Sans JP",sans-serif}
+html[lang="ja"] body,html[lang="ja"] :is(h1,h2,.tab,.chef text){font-family:var(--jp-font)}
+html[lang="ja"] body{line-height:1.65;line-break:strict}
+html[lang="ja"] h1{line-height:1.25}
+html[lang="ja"] :is(.chip,.tab){min-height:44px}
+.panel,.row input{min-width:0}
+.tabs{flex-wrap:wrap}
+#planTxt{font-size:16px}
+@media (max-width:480px){
+  .card:not(.chef){display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
+  .card .sig{font-size:18px;white-space:normal;text-align:right;max-width:9ch}
+}
 </style>
 </head>
 <body>
@@ -113,7 +155,7 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
   <header id="E-MANUEL-00-entete">
     <h1 data-t="title">Formations d'escadron</h1>
     <p class="sub" data-t="sub">Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.</p>
-    <div class="chips lang" id="langs" role="group" aria-label="Langue / Language"></div>
+    <div class="chips lang" id="langs" role="group" data-ta="languageLabel" aria-label="Langue / Language"></div>
   </header>
 
   <div class="tabs" role="tablist">
@@ -134,8 +176,8 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
         <h2 data-t="setup">Votre escadron</h2>
         <span class="lbl" data-t="leaderL">Chef d'escadron et grade</span>
         <div class="row">
-          <input id="leader" placeholder="Pseudo du chef" data-tp="leaderPh" maxlength="40" autocomplete="off">
-          <input id="rank" class="rank" placeholder="R4" maxlength="6" autocomplete="off">
+          <input id="leader" placeholder="Pseudo du chef" data-tp="leaderPh" data-ta="leaderPh" maxlength="40" autocomplete="off">
+          <input id="rank" class="rank" placeholder="R4" data-ta="rankLabel" maxlength="6" autocomplete="off">
         </div>
 
         <span class="lbl" data-t="shapeL">Forme à dessiner</span>
@@ -151,7 +193,7 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
           <span class="lbl" data-t="nL">Nombre de coéquipiers (jusqu'à 500)</span>
           <div class="step">
             <button class="btn sq" id="nMinus" type="button" data-ta="nMinusA" aria-label="Un coéquipier de moins">−</button>
-            <input id="n" type="number" inputmode="numeric" min="1" max="500">
+            <input id="n" type="text" inputmode="numeric" data-ta="nL">
             <button class="btn sq" id="nPlus" type="button" data-ta="nPlusA" aria-label="Un coéquipier de plus">+</button>
           </div>
         </div>
@@ -166,7 +208,7 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
         </div>
 
         <span class="lbl" data-t="namesL">Pseudos des coéquipiers (un par ligne, facultatif)</span>
-        <textarea id="names" rows="4" placeholder="Alpha&#10;Bravo&#10;Charlie"></textarea>
+        <textarea id="names" rows="4" data-ta="namesL" data-tp="namesPh"></textarea>
         <p class="hint" id="nameInfo"></p>
 
         <span class="lbl" data-t="refL">Comment chacun se repère ?</span>
@@ -186,8 +228,12 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
       <!-- ==== E-MANUEL-11 · CARTE ==== -->
       <section class="panel" id="E-MANUEL-11-carte">
         <h2 data-t="mapH">La forme sur la carte</h2>
-        <div class="mapbox"><svg id="map" role="img" aria-label="Plan de la formation"></svg></div>
-        <p class="hint" id="mapHint"></p>
+        <div class="mapbox"><svg id="map" role="group" aria-labelledby="mapHint"></svg></div>
+        <p class="hint" id="mapHint" aria-live="polite"></p>
+        <div class="wrapbtn" id="placementActions" hidden>
+          <button class="btn" id="cancelPosition" type="button" data-t="cancelPosition"></button>
+          <button class="btn" id="removePosition" type="button" data-t="removePosition" hidden></button>
+        </div>
       </section>
 
       <!-- ==== E-MANUEL-12 · SIGNALÉTIQUE ==== -->
@@ -200,7 +246,7 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
         <div id="cards"></div>
         <details id="planBox">
           <summary data-t="planBox">Voir le texte à coller dans le chat d'alliance</summary>
-          <textarea id="planTxt" readonly></textarea>
+          <textarea id="planTxt" data-ta="planBox" readonly></textarea>
         </details>
       </section>
     </div>
@@ -237,17 +283,22 @@ const FIXED=new Set([...FUN,...HEARTS]);
 const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le chef'}];
 const KEY='rokens-arte-last-war-v1';
 const clampN=n=>Math.min(500,Math.max(1,Math.round(+n)||1));
-const S={lang:'fr',tab:'make',leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1};
+const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1};
 
 /* ==== E-MANUEL-09 · LANGUES (fr · en · ja · id) — pour en ajouter une : copier un bloc, l'ajouter dans LANGS ==== */
 const LANGS=[{id:'fr',label:'Français'},{id:'en',label:'English'},{id:'ja',label:'日本語'},{id:'id',label:'Bahasa Indonesia'}];
 const L=()=>I18N[S.lang]||I18N.fr;
 function detectLang(){
-  const c=((navigator.languages&&navigator.languages[0])||navigator.language||'fr').slice(0,2).toLowerCase();
-  return {fr:'fr',en:'en',ja:'ja',id:'id','in':'id'}[c]||'en';
+  const supported=new Map([['fr','fr'],['en','en'],['ja','ja'],['id','id'],['in','id']]);
+  for(const locale of [...(navigator.languages||[]),navigator.language||'']){
+    const match=supported.get(locale.toLowerCase().split(/[-_]/)[0]);
+    if(match)return match;
+  }
+  return 'en';
 }
 const I18N={
 fr:{
+ languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
  title:"Formations d'escadron",
  sub:"Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.",
@@ -261,15 +312,18 @@ fr:{
   "<b>Choisissez votre chef</b> (pseudo + grade) : il se place en premier, sur la case ★ au centre.",
   "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…). Les formes fun et les cœurs ont une taille fixe.",
   "<b>Réglez le nombre de coéquipiers</b> et écrivez leurs pseudos (un par ligne, facultatif).",
-  "<b>Lisez la carte</b> : chaque rond numéroté est un coéquipier. Les traits pointillés montrent sur qui il se repère.",
+  "<b>Lisez la carte</b> : chaque case numérotée est un coéquipier. Pour le déplacer, sélectionnez-le puis choisissez une case libre. Les traits pointillés montrent sur qui il se repère.",
   "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↗2 veut dire 2 cases en diagonale. Les directions sont celles de l'écran du jeu.",
   "<b>Envoyez le plan</b> : touchez « Copier le plan » et collez-le dans le chat d'alliance. Le chef se place d'abord, puis chacun dans l'ordre des numéros.",
   "<b>Envie de votre propre forme ?</b> Choisissez ✎ Libre (ou « Modifier cette forme »), puis touchez les cases de la grille. ↻ Pivoter et ⇋ Miroir tournent ou retournent n'importe quelle forme."
  ],funL:"Formes fun · 5 cases (chef + 4)",fixedInfo:t=>`Forme fixe : ${t} cases, le chef + ${t-1} coéquipiers. Pivotez-la ou retournez-la comme vous voulez.`,heartL:"Cœurs · taille fixe",shapesHint:"Seules les formes qui rentrent avec votre nombre de coéquipiers sont proposées. Essayez 4, 8, 12… pour en voir d'autres.",copy:"Copier le plan",
  planHint:"Les directions sont celles que vous voyez sur l'écran du jeu. Le chef se place en premier, puis chacun dans l'ordre des numéros.",
  planBox:"Voir le texte à coller dans le chat d'alliance",
- hintFree:"Touchez une case vide pour ajouter un coéquipier, touchez un rond pour le retirer.",
- hintMap:"Touchez un rond pour voir sa fiche. Les traits pointillés montrent sur qui chacun se repère.",
+ hintFree:"Sélectionnez un coéquipier pour le déplacer ou touchez une case libre pour en ajouter un.",
+ hintMap:"Sélectionnez un coéquipier sur la carte ou dans la liste pour le déplacer.",
+ movePosition:"Choisissez une case libre pour déplacer",
+ cancelPosition:"Annuler",
+ removePosition:"Retirer la case",
  refNeighbor:"Chacun se repère sur quelqu'un déjà placé : c'est le plus simple à suivre.",
  refLeader:"Tout le monde se repère uniquement sur le chef.",
  chefIns:"Se place en premier, au centre de la forme.",
@@ -287,6 +341,7 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
+ languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
  title:"Squad formations",
  sub:"Last War · RokenS ART3 — the leader takes position, every teammate gets simple directions.",
@@ -300,15 +355,18 @@ en:{
   "<b>Pick your leader</b> (name + rank): they take position first, on the ★ cell in the center.",
   "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…). Fun shapes and hearts have a fixed size.",
   "<b>Set the number of teammates</b> and type their names (one per line, optional).",
-  "<b>Read the map</b>: each numbered circle is a teammate. Dotted lines show who they line up with.",
+  "<b>Read the map</b>: each numbered tile is a teammate. Select a teammate, then an empty tile to move them. Dotted lines show who they line up with.",
   "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↗2 means 2 cells diagonally. Directions are the ones on the game screen.",
   "<b>Share the plan</b>: tap “Copy plan” and paste it in the alliance chat. The leader goes first, then everyone in number order.",
   "<b>Want your own shape?</b> Pick ✎ Free (or “Edit this shape”), then tap cells on the grid. ↻ Rotate and ⇋ Mirror turn or flip any shape."
  ],funL:"Fun shapes · 5 cells (leader + 4)",fixedInfo:t=>`Fixed shape: ${t} cells, the leader + ${t-1} teammates. Rotate or flip it as you like.`,heartL:"Hearts · fixed size",shapesHint:"Only shapes that fit your number of teammates are shown. Try 4, 8, 12… to see more.",copy:"Copy plan",
  planHint:"Directions are the ones you see on the game screen. The leader takes position first, then everyone in number order.",
  planBox:"Show the text to paste into the alliance chat",
- hintFree:"Tap an empty cell to add a teammate, tap a circle to remove it.",
- hintMap:"Tap a circle to see its card. Dotted lines show who each person lines up with.",
+ hintFree:"Select a teammate to move them, or choose an empty tile to add one.",
+ hintMap:"Select a teammate on the map or in the list to move them.",
+ movePosition:"Choose an empty tile to move",
+ cancelPosition:"Cancel",
+ removePosition:"Remove tile",
  refNeighbor:"Everyone lines up with someone already in place: the easiest to follow.",
  refLeader:"Everyone lines up with the leader only.",
  chefIns:"Takes position first, at the center of the shape.",
@@ -334,39 +392,43 @@ en:{
  }
 },
 ja:{
+ languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
  title:"部隊フォーメーション",
- sub:"Last War · RokenS ART3 — リーダーが先に配置し、各メンバーに位置の指示が届きます。",
- setup:"あなたの部隊",leaderL:"部隊リーダーとランク",leaderPh:"リーダー名",
+ sub:"Last War · RokenS ART3 — リーダーを中心に、各メンバーの配置を決められます。",
+ setup:"部隊の設定",leaderL:"部隊リーダーとランク",leaderPh:"リーダー名",
  shapeL:"作る形",nL:"メンバー数（最大500）",
  nMinusA:"メンバーを1人減らす",nPlusA:"メンバーを1人増やす",
  freeL:"自由描画",gMinus:"グリッド −",gPlus:"グリッド +",clear:"全消去",
  namesL:"メンバー名（1行に1人、任意）",refL:"各自の位置の基準は？",
  rot:"↻ 回転",mir:"⇋ 反転",edit:"✎ この形を編集",reset:"リセット",
- mapH:"マップ上の形",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊リーダーが率いる部隊を作り、リーダーに付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
+ mapH:"配置マップ",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊リーダーが率いる部隊を作り、リーダーに付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
   "<b>リーダーを決める</b>（名前とランク）：最初に、中央の★のマスに配置します。",
   "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。おもしろ図形とハートはサイズ固定です。",
   "<b>メンバー数を設定</b>し、名前を入力します（1行に1人、任意）。",
-  "<b>マップを見る</b>：番号つきの丸が各メンバーです。点線は、その人が基準にする相手を示します。",
+  "<b>マップを見る</b>：番号つきのマスが各メンバーです。移動するにはメンバーを選んでから空きマスを選びます。点線は、その人が基準にする相手を示します。",
   "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↗2 は斜めに2マスという意味です。方向はゲーム画面で見えるとおりです。",
   "<b>プランを共有</b>：「プランをコピー」を押して同盟チャットに貼り付けます。リーダーが先、その後は番号順です。",
   "<b>自分だけの形を作りたい？</b> ✎ 自由（または「この形を編集」）を選び、グリッドのマスをタップします。↻ 回転と ⇋ 反転で、どの形も向きを変えられます。"
  ],funL:"おもしろ図形 · 5マス（リーダー＋4人）",fixedInfo:t=>`固定の形：${t}マス（リーダー＋メンバー${t-1}人）。回転・反転できます。`,heartL:"ハート · サイズ固定",shapesHint:"メンバー数に合う形だけを表示しています。4、8、12…人にすると他の形も出ます。",copy:"プランをコピー",
  planHint:"方向はゲーム画面で見えるとおりです。リーダーが最初に配置し、その後は番号順です。",
  planBox:"同盟チャットに貼り付けるテキストを表示",
- hintFree:"空きマスをタップでメンバー追加、丸をタップで削除します。",
- hintMap:"丸をタップでカードを表示。点線は各メンバーの基準相手を示します。",
- refNeighbor:"配置済みのメンバーを基準にするので、いちばん分かりやすい方法です。",
+ hintFree:"メンバーを選ぶと移動できます。空きマスを選ぶと追加できます。",
+ hintMap:"マップまたは一覧でメンバーを選ぶと移動できます。",
+ movePosition:"移動先の空きマスを選択",
+ cancelPosition:"キャンセル",
+ removePosition:"配置マスを削除",
+ refNeighbor:"先に配置するメンバーを目印に、次の位置を案内します。",
  refLeader:"全員がリーダーだけを基準にします。",
  chefIns:"最初に、形の中央に配置します。",
  none:"メンバーがいません。マップ上でマスを追加してください。",
  toastOk:"コピーしました ✔",toastManual:"テキストを選択してコピーしてください",
  chef:"リーダー",defName:i=>"メンバー"+i,
- planH:n=>`指示 · メンバー${n}人`,
+ planH:n=>`配置指示（メンバー${n}人）`,
  nameInfo:(k,t)=>`${k}件の名前 / ${t}枠。`+(k>t?` ${k-t}件が余っています。`:'')+(k<t?' 残りは「メンバーN」になります。':''),
  fit:k=>`${k}人に合わせる`,
  planHead:(s,name,rank,n)=>`🎖️ フォーメーション「${s}」 — ${name}（${rank}）＋メンバー${n}人`,
- planFirst:name=>`1. ${name} が最初に中央へ配置`,
+ planFirst:name=>`1. ${name}：最初に中央のマスへ`,
  planFoot:"（方向はゲーム画面上のもの · RokenS ART3）",rankFallback:"リーダー",
  shapes:{cross:'十字 +',x:'X字',star:'星',block:'ブロック',square:'四角（枠）',circle:'円',diamond:'ひし形',v:'V字',tri:'三角',vline:'縦線 │',hline:'横線 ─',diag:'斜め線',free:'✎ 自由',f_t:'ハンマー',f_u:'馬蹄',f_w:'階段',f_z:'稲妻',f_p:'旗',f_l:'ブーツ',f_v:'角',f_y:'Y字',f_n:'ヘビ',f_f:'F字',h_mini:'ミニハート',h_line:'ハート（輪郭）',h_fill:'ハート（塗り）',h_big:'大きなハート（塗り）',h_bigline:'大きなハート（輪郭）'},
  refs:{neighbor:'隣のメンバー基準',leader:'リーダー基準'},
@@ -376,11 +438,12 @@ ja:{
   if(!dx)return `${ref}の${ay}マス${dy<0?'上':'下'}`;
   if(!dy)return `${ref}の${ax}マス${dx<0?'左':'右'}`;
   const v=dy<0?'上':'下',h=dx<0?'左':'右';
-  if(ax===ay)return `${ref}の${ax}マス斜め${h}${v}`;
-  return `${ref}の${v}${ay}マス・${h}${ax}マス`;
+  if(ax===ay)return `${ref}から${h}${v}に${ax}マス`;
+  return `${ref}から${v}に${ay}マス、${h}に${ax}マス`;
  }
 },
 id:{
+ languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
  title:"Formasi skuad",
  sub:"Last War · RokenS ART3 — pemimpin menempati posisi lebih dulu, setiap anggota mendapat petunjuk sederhana.",
@@ -394,15 +457,18 @@ id:{
   "<b>Pilih pemimpin</b> (nama + pangkat): dia menempati posisi lebih dulu, di kotak ★ di tengah.",
   "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…). Bentuk seru dan hati berukuran tetap.",
   "<b>Atur jumlah anggota</b> dan tulis nama mereka (satu per baris, opsional).",
-  "<b>Baca peta</b>: setiap lingkaran bernomor adalah satu anggota. Garis putus-putus menunjukkan patokan mereka.",
+  "<b>Baca peta</b>: setiap petak bernomor adalah satu anggota. Pilih anggota, lalu pilih petak kosong untuk memindahkannya. Garis putus-putus menunjukkan patokan mereka.",
   "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↗2 berarti 2 kotak secara diagonal. Arah sesuai layar game.",
   "<b>Bagikan rencana</b>: ketuk “Salin rencana” lalu tempel di chat aliansi. Pemimpin lebih dulu, lalu semua sesuai nomor.",
   "<b>Mau bentuk sendiri?</b> Pilih ✎ Bebas (atau “Ubah bentuk ini”), lalu ketuk kotak di grid. ↻ Putar dan ⇋ Cermin memutar atau membalik bentuk apa pun."
  ],funL:"Bentuk seru · 5 kotak (pemimpin + 4)",fixedInfo:t=>`Bentuk tetap: ${t} kotak, pemimpin + ${t-1} anggota. Putar atau balik sesuka hati.`,heartL:"Hati · ukuran tetap",shapesHint:"Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan. Coba 4, 8, 12… untuk melihat lainnya.",copy:"Salin rencana",
  planHint:"Arah sesuai yang terlihat di layar game. Pemimpin menempati posisi lebih dulu, lalu semua anggota sesuai nomor.",
  planBox:"Lihat teks untuk ditempel di chat aliansi",
- hintFree:"Ketuk kotak kosong untuk menambah anggota, ketuk lingkaran untuk menghapus.",
- hintMap:"Ketuk lingkaran untuk melihat kartunya. Garis putus-putus menunjukkan patokan tiap anggota.",
+ hintFree:"Pilih anggota untuk memindahkannya, atau pilih petak kosong untuk menambah anggota.",
+ hintMap:"Pilih anggota di peta atau daftar untuk memindahkannya.",
+ movePosition:"Pilih petak kosong untuk memindahkan",
+ cancelPosition:"Batal",
+ removePosition:"Hapus petak",
  refNeighbor:"Semua berpatokan pada anggota yang sudah menempati posisi: paling mudah diikuti.",
  refLeader:"Semua hanya berpatokan pada pemimpin.",
  chefIns:"Menempati posisi pertama, di tengah bentuk.",
@@ -432,6 +498,7 @@ id:{
 /* ==== E-MANUEL-02 · FORMES (offsets [x,y] autour du chef, x → droite, y → bas) ==== */
 const ang=([x,y])=>(Math.atan2(x,-y)+2*Math.PI)%(2*Math.PI);          // 0 = haut, sens horaire
 const cheb=([x,y])=>Math.max(Math.abs(x),Math.abs(y));
+const sortCells=cells=>cells.sort((a,b)=>cheb(a)-cheb(b)||ang(a)-ang(b));
 const cellsWhere=(test,R)=>{const o=[];for(let y=-R;y<=R;y++)for(let x=-R;x<=R;x++)if((x||y)&&test(x,y))o.push([x,y]);return o;};
 const byAngle=c=>c.sort((a,b)=>ang(a)-ang(b));
 const sample=(a,n)=>a.length<=n?a:Array.from({length:n},(_,i)=>a[Math.floor(i*a.length/n)]);
@@ -523,7 +590,7 @@ function pickRef(placed,x,y){
   return best;
 }
 function buildPlan(){
-  const cells=baseCells().sort((a,b)=>cheb(a)-cheb(b)||ang(a)-ang(b));
+  const cells=S.shape==='free'?baseCells():sortCells(baseCells());
   const names=(S.names||'').split('\n').map(s=>s.trim()).filter(Boolean);
   const chef={name:S.leader||L().chef,x:0,y:0,i:-1};
   const placed=[chef];
@@ -553,22 +620,26 @@ function renderMap(plan){
   const free=S.shape==='free',U=40,svg=$('map');
   let a=0,b=0,c=0,d=0;
   for(const m of plan.members){a=Math.min(a,m.x);b=Math.max(b,m.x);c=Math.min(c,m.y);d=Math.max(d,m.y);}
+  a--;b++;c--;d++;
   if(free){a=Math.min(a,-S.freeR);b=Math.max(b,S.freeR);c=Math.min(c,-S.freeR);d=Math.max(d,S.freeR);}
-  else{a--;b++;c--;d++;}
   const W=(b-a+1)*U,H=(d-c+1)*U,X=x=>(x-a)*U,Y=y=>(y-c)*U,cx=x=>X(x)+U/2,cy=y=>Y(y)+U/2;
   let o='';
-  for(let y=c;y<=d;y++)for(let x=a;x<=b;x++)o+=`<rect class="gc" x="${X(x)+1}" y="${Y(y)+1}" width="${U-2}" height="${U-2}" rx="5" data-x="${x}" data-y="${y}"/>`;
+  for(let y=c;y<=d;y++)for(let x=a;x<=b;x++)o+=`<rect class="gc${(x+y)%2?" alt":""}" x="${X(x)+1}" y="${Y(y)+1}" width="${U-2}" height="${U-2}" data-x="${x}" data-y="${y}"/>`;
   for(const m of plan.members)o+=`<line class="lk" x1="${cx(m.ref.x)}" y1="${cy(m.ref.y)}" x2="${cx(m.x)}" y2="${cy(m.y)}"/>`;
   for(const m of plan.members){
     const fs=m.i>=99?11:15;
-    o+=`<g class="mb${S.sel===m.i?' on':''}" data-i="${m.i}" data-x="${m.x}" data-y="${m.y}"><rect x="${X(m.x)+3}" y="${Y(m.y)+3}" width="${U-6}" height="${U-6}" rx="8"/><text x="${cx(m.x)}" y="${cy(m.y)}" style="font-size:${fs}px">${m.i+1}</text></g>`;
+    o+=`<g class="mb${S.sel===m.i?' on':''}" data-i="${m.i}" data-x="${m.x}" data-y="${m.y}"><path class="token" transform="translate(${X(m.x)},${Y(m.y)})" d="M8 4h24v4h4v24h-4v4H8v-4H4V8h4z"/><path class="shine" transform="translate(${X(m.x)},${Y(m.y)})" d="M9 7h22v2H9z"/><text x="${cx(m.x)}" y="${cy(m.y)}" style="font-size:${fs}px">${m.i+1}</text></g>`;
   }
-  o+=`<g class="chef"><rect x="${X(0)+2}" y="${Y(0)+2}" width="${U-4}" height="${U-4}" rx="8"/><text class="st" x="${cx(0)}" y="${cy(0)-4}">★</text><text class="rk" x="${cx(0)}" y="${cy(0)+11}">${esc(S.rank||'')}</text></g>`;
+  o+=`<g class="chef"><path class="token" transform="translate(${X(0)},${Y(0)})" d="M8 3h24v5h5v24h-5v5H8v-5H3V8h5z"/><path transform="translate(${X(0)},${Y(0)})" fill="#241a00" shape-rendering="crispEdges" d="M18 7h4v4h8v4h-4v8h-4v-4h-4v4h-4v-8h-4v-4h8z"/><text class="rk" x="${cx(0)}" y="${cy(0)+11}">${esc(S.rank||'')}</text></g>`;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   svg.style.maxWidth=Math.max(W*2.2,280)+'px';
   svg.classList.toggle('free',free);
   svg.innerHTML=o;
-  $('mapHint').textContent=free?L().hintFree:L().hintMap;
+  const selected=plan.members[S.sel];
+  svg.classList.toggle('placing',Boolean(selected));
+  $('mapHint').textContent=selected?`${L().movePosition} · ${selected.name}`:free?L().hintFree:L().hintMap;
+  $('placementActions').hidden=!selected;
+  $('removePosition').hidden=!free;
 }
 
 /* ==== E-MANUEL-05 · FICHES COÉQUIPIERS ==== */
@@ -578,7 +649,7 @@ function renderCards(plan){
   let h=`<div class="card chef"><span class="badge">★</span><span class="body"><b>${esc(plan.chef.name)}${S.rank?' ('+esc(S.rank)+')':''}</b><span class="ins">${esc(L().chefIns)}</span></span></div>`;
   if(!n)h+=`<p class="hint">${esc(L().none)}</p>`;
   for(const m of plan.members){
-    h+=`<button type="button" class="card${S.sel===m.i?' on':''}" id="c${m.i}" data-i="${m.i}"><span class="badge">${m.i+1}</span><span class="body"><b>${esc(m.name)}</b><span class="ins">${esc(m.text)}</span></span><span class="sig">${esc(m.sig)}</span></button>`;
+    h+=`<button type="button" class="card${S.sel===m.i?' on':''}" aria-pressed="${S.sel===m.i}" id="c${m.i}" data-i="${m.i}"><span class="badge">${m.i+1}</span><span class="body"><b>${esc(m.name)}</b><span class="ins">${esc(m.text)}</span></span><span class="sig">${esc(m.sig)}</span></button>`;
   }
   $('cards').innerHTML=h;
 }
@@ -587,7 +658,9 @@ function chips(el,items,cur,attr){
 }
 function renderControls(plan){
   const free=S.shape==='free',l=L();
-  chips($('langs'),LANGS,S.lang,'lang');
+  $('langs').innerHTML=[{id:'auto',label:l.autoLanguage},...LANGS].map(({id,label})=>
+    `<button type="button" class="chip" data-lang="${id}" lang="${id==='auto'?S.lang:id}" aria-pressed="${id===S.languageMode}">${label}</button>`
+  ).join('');
   const fixed=FIXED.has(S.shape),cs=cur();
   chips($('shapes'),SHAPES.filter(x=>!FIXED.has(x.id)&&shapeOk(x.id,S.n)).map(x=>({id:x.id,label:l.shapes[x.id]})),cs,'shape');
   chips($('funShapes'),SHAPES.filter(x=>FUN.has(x.id)).map(x=>({id:x.id,label:l.shapes[x.id]})),cs,'shape');
@@ -618,7 +691,7 @@ async function copyPlan(){
 }
 
 /* ==== E-MANUEL-07 · SAUVEGARDE LOCALE (confort, ce navigateur uniquement) ==== */
-function save(){try{localStorage.setItem(KEY,JSON.stringify(Object.assign({},S,{sel:-1})));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(Object.assign({},S,{sel:-1,freeOrdered:true})));}catch(e){}}
 function load(){
   try{
     const r=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -631,8 +704,12 @@ function load(){
     S.rot=(((+r.rot||0)%4)+4)%4;
     S.mirror=!!r.mirror;
     if(REFS.some(s=>s.id===r.ref))S.ref=r.ref;
-    if(LANGS.some(s=>s.id===r.lang))S.lang=r.lang;
-    if(Array.isArray(r.free))S.free=r.free.filter(p=>Array.isArray(p)&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&(p[0]||p[1])&&Math.abs(p[0])<=60&&Math.abs(p[1])<=60).slice(0,500);
+    if(LANGS.some(s=>s.id===r.languageMode)){
+      S.languageMode=r.languageMode;
+      S.lang=r.languageMode;
+    }
+    if(Array.isArray(r.free))S.free=r.free.filter(p=>Array.isArray(p)&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&(p[0]||p[1])&&Math.abs(p[0])<=500&&Math.abs(p[1])<=500).slice(0,500);
+    if(!r.freeOrdered)sortCells(S.free);
     S.freeR=Math.min(40,Math.max(3,Math.round(+r.freeR)||6));
   }catch(e){}
 }
@@ -653,7 +730,6 @@ function render(){
   $('planTxt').value=planText(plan);
   save();
 }
-const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
 function init(){
   S.lang=detectLang();
   load();
@@ -668,18 +744,39 @@ function init(){
   $('leader').addEventListener('input',e=>{S.leader=e.target.value;render();});
   $('rank').addEventListener('input',e=>{S.rank=e.target.value;render();});
   $('names').addEventListener('input',e=>{S.names=e.target.value;render();});
-  $('n').addEventListener('input',e=>{if(e.target.value==='')return;S.n=clampN(e.target.value);S.sel=-1;render();});
+  const updateCount=e=>{
+    if(e.isComposing)return;
+    const count=e.target.value.normalize('NFKC').trim();
+    if(!/^\d+$/.test(count))return;
+    const n=clampN(count);
+    if(n===S.n)return;
+    S.n=n;S.sel=-1;render();
+  };
+  $('n').addEventListener('input',updateCount);
+  $('n').addEventListener('compositionend',updateCount);
   $('n').addEventListener('blur',()=>{$('n').value=S.n;});
   $('nMinus').onclick=()=>{S.n=clampN(S.n-1);S.sel=-1;render();};
   $('nPlus').onclick=()=>{S.n=clampN(S.n+1);S.sel=-1;render();};
   ['shapes','funShapes','heartShapes'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('[data-shape]');if(!b)return;S.shape=b.dataset.shape;S.sel=-1;render();}));
   $('refs').addEventListener('click',e=>{const b=e.target.closest('[data-ref]');if(!b)return;S.ref=b.dataset.ref;render();});
-  $('langs').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(!b)return;S.lang=b.dataset.lang;render();});
+  $('langs').addEventListener('click',e=>{
+    const b=e.target.closest('[data-lang]');
+    if(!b)return;
+    S.languageMode=b.dataset.lang;
+    S.lang=S.languageMode==='auto'?detectLang():S.languageMode;
+    render();
+    $('langs').querySelector('[aria-pressed="true"]').focus();
+  });
+  window.addEventListener('languagechange',()=>{
+    if(S.languageMode!=='auto')return;
+    S.lang=detectLang();
+    render();
+  });
   $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames'){S.n=clampN(buildPlan().names.length);S.sel=-1;render();}});
   $('rot').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-y,x]);else S.rot=(S.rot+1)%4;S.sel=-1;render();};
   $('mir').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-x,y]);else S.mirror=!S.mirror;S.sel=-1;render();};
   $('edit').onclick=()=>{
-    const c=baseCells();
+    const c=sortCells(baseCells());
     S.free=c;S.shape='free';S.sel=-1;
     S.freeR=Math.min(40,Math.max(6,Math.max(...c.map(cheb))+1));
     render();
@@ -689,19 +786,38 @@ function init(){
   $('gPlus').onclick=()=>{S.freeR=Math.min(40,S.freeR+1);render();};
   $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1});$('leader').value=S.leader;$('rank').value=S.rank;$('names').value='';render();};
   $('copy').onclick=copyPlan;
+  $('cancelPosition').onclick=()=>{S.sel=-1;render();};
+  $('removePosition').onclick=()=>{
+    if(S.shape!=='free'||S.sel<0)return;
+    S.free.splice(S.sel,1);
+    S.sel=-1;
+    render();
+  };
   $('map').addEventListener('click',e=>{
     const g=e.target.closest('[data-x]');
     if(!g)return;
-    const x=+g.dataset.x,y=+g.dataset.y;
-    if(S.shape==='free'){
-      if(!x&&!y)return;
-      const k=S.free.findIndex(p=>p[0]===x&&p[1]===y);
-      if(k>=0)S.free.splice(k,1);else S.free.push([x,y]);
-      S.sel=-1;render();
-    }else if(g.dataset.i!==undefined){
-      S.sel=+g.dataset.i;render();
-      const el=$('c'+S.sel);if(el)el.scrollIntoView({block:'nearest',behavior:smooth()});
+    if(g.dataset.i!==undefined){
+      const i=+g.dataset.i;
+      S.sel=S.sel===i?-1:i;
+      render();
+      return;
     }
+    const x=+g.dataset.x,y=+g.dataset.y;
+    if(!x&&!y)return;
+    const cells=S.shape==='free'?S.free:sortCells(baseCells());
+    if(cells.some(([cx,cy])=>cx===x&&cy===y))return;
+    if(S.sel>=0){
+      if(S.shape!=='free'){
+        S.free=cells;
+        S.shape='free';
+        S.freeR=3;
+      }
+      S.free[S.sel]=[x,y];
+    }else if(S.shape==='free'&&S.free.length<500){
+      S.free.push([x,y]);
+    }else return;
+    S.sel=-1;
+    render();
   });
   $('cards').addEventListener('click',e=>{
     const b=e.target.closest('[data-i]');

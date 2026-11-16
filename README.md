@@ -6,7 +6,7 @@ Le chef se place en premier, puis chaque coéquipier reçoit une consigne simple
 **EN** — Create a squad led by a squad leader and form a group of teammates attached to them, then give each one their position simply.
 The leader takes position first, then every teammate gets a simple direction ("1 cell above RokenS", ↑1…).
 
-Langues / Languages : Français · English · 日本語 · Bahasa Indonesia (automatic detection + language buttons)
+Langues / Languages : Français · English · 日本語 · Bahasa Indonesia. Le mode Auto suit les langues préférées du navigateur. Un choix manuel est mémorisé. / Auto follows the browser’s preferred languages. A manual choice is remembered.
 
 ## Fonctionnalités / Features
 - Formes automatiques (croix, X, étoile, bloc, carré, cercle, losange, V, triangle, lignes) proposées seulement si elles sont possibles avec le nombre de coéquipiers choisi
