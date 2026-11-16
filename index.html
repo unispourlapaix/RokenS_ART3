@@ -148,6 +148,12 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
   .card:not(.chef){display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px}
   .card .sig{font-size:18px;white-space:normal;text-align:right;max-width:9ch}
 }
+.pixel-patterns{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.pixel-pattern{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;text-align:start;padding:6px 9px;min-height:52px}
+.pixel-preview{display:grid;gap:1px;padding:3px;background:var(--map-bed)}
+.pixel-preview span{width:5px;height:5px;background:var(--map-tile)}
+.pixel-preview .member{background:#a5bb79}
+.pixel-preview .leader{background:#ffd366}
 </style>
 </head>
 <body>
@@ -178,6 +184,10 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         <div class="row">
           <input id="leader" placeholder="Pseudo du chef" data-tp="leaderPh" data-ta="leaderPh" maxlength="40" autocomplete="off">
           <input id="rank" class="rank" placeholder="R4" data-ta="rankLabel" maxlength="6" autocomplete="off">
+        </div>
+
+        <div class="wrapbtn">
+          <button class="btn" id="squadOfSeven" type="button" data-t="squadOfSeven"></button>
         </div>
 
         <span class="lbl" data-t="shapeL">Forme à dessiner</span>
@@ -228,6 +238,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
       <!-- ==== E-MANUEL-11 · CARTE ==== -->
       <section class="panel" id="E-MANUEL-11-carte">
         <h2 data-t="mapH">La forme sur la carte</h2>
+        <div class="pixel-patterns" id="pixelPatterns" role="group" data-ta="pixelPatterns"></div>
         <div class="mapbox"><svg id="map" role="group" aria-labelledby="mapHint"></svg></div>
         <p class="hint" id="mapHint" aria-live="polite"></p>
         <div class="wrapbtn" id="placementActions" hidden>
@@ -283,7 +294,16 @@ const FIXED=new Set([...FUN,...HEARTS]);
 const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le chef'}];
 const KEY='rokens-arte-last-war-v1';
 const clampN=n=>Math.min(500,Math.max(1,Math.round(+n)||1));
-const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1};
+const PIXEL_PATTERNS={
+  robot:['XXX','XCX','.X.'],
+  rocket:['.X.','XCX','.X.','X.X'],
+  alien:['X.X','.C.','XXX','.X.'],
+  sword:['..X','..X','XCX','.X.','X..'],
+  tank:['.X..','XXCX','.XX.']
+};
+const squadOfSeven=(pattern='robot')=>({
+  shape:'free',n:6,free:sortCells(parsePat(PIXEL_PATTERNS[pattern])),freeR:4
+});
 
 /* ==== E-MANUEL-09 · LANGUES (fr · en · ja · id) — pour en ajouter une : copier un bloc, l'ajouter dans LANGS ==== */
 const LANGS=[{id:'fr',label:'Français'},{id:'en',label:'English'},{id:'ja',label:'日本語'},{id:'id',label:'Bahasa Indonesia'}];
@@ -298,6 +318,8 @@ function detectLang(){
 }
 const I18N={
 fr:{
+ pixelPatterns:"Motifs pixel art de 7 cases",pixelNames:{"robot": "Robot", "rocket": "Fusée", "alien": "Alien", "sword": "Épée", "tank": "Char"},
+ squadOfSeven:"Escadron de 7 (chef + 6)",
  languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
  title:"Formations d'escadron",
@@ -341,6 +363,8 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
+ pixelPatterns:"Seven-tile pixel art patterns",pixelNames:{"robot": "Robot", "rocket": "Rocket", "alien": "Alien", "sword": "Sword", "tank": "Tank"},
+ squadOfSeven:"Squad of 7 (leader + 6)",
  languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
  title:"Squad formations",
@@ -392,6 +416,8 @@ en:{
  }
 },
 ja:{
+ pixelPatterns:"7マスのドット絵",pixelNames:{"robot": "ロボット", "rocket": "ロケット", "alien": "宇宙人", "sword": "剣", "tank": "戦車"},
+ squadOfSeven:"7人編成（リーダー＋6人）",
  languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
  title:"部隊フォーメーション",
@@ -443,6 +469,8 @@ ja:{
  }
 },
 id:{
+ pixelPatterns:"Pola seni piksel 7 petak",pixelNames:{"robot": "Robot", "rocket": "Roket", "alien": "Alien", "sword": "Pedang", "tank": "Tank"},
+ squadOfSeven:"Skuad 7 orang (pemimpin + 6)",
  languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
  title:"Formasi skuad",
@@ -542,6 +570,7 @@ function parsePat(rows){                       // X = coéquipier, C = chef
   rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='X')out.push([x-c[0],y-c[1]]);}));
   return out;
 }
+const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',rank:'R4',...squadOfSeven(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1};
 const HCOUNT={};
 for(const k in HEART_ASCII){GEN[k]=()=>parsePat(HEART_ASCII[k]);HCOUNT[k]=parsePat(HEART_ASCII[k]).length+1;}
 const RULE={   // n = nombre de coéquipiers ; une forme n'est proposée que si elle est complète et symétrique
@@ -637,6 +666,13 @@ function renderMap(plan){
   svg.innerHTML=o;
   const selected=plan.members[S.sel];
   svg.classList.toggle('placing',Boolean(selected));
+  $('pixelPatterns').innerHTML=Object.entries(PIXEL_PATTERNS).map(([id,rows])=>{
+    const preview=[...rows.join('')].map(tile=>{
+      const color={'.':'','X':'member','C':'leader'}[tile];
+      return `<span class="${color}"></span>`;
+    }).join('');
+    return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},5px)">${preview}</span>${L().pixelNames[id]}</button>`;
+  }).join('');
   $('mapHint').textContent=selected?`${L().movePosition} · ${selected.name}`:free?L().hintFree:L().hintMap;
   $('placementActions').hidden=!selected;
   $('removePosition').hidden=!free;
@@ -752,6 +788,17 @@ function init(){
     if(n===S.n)return;
     S.n=n;S.sel=-1;render();
   };
+  $('squadOfSeven').onclick=()=>{
+    Object.assign(S,squadOfSeven(),{sel:-1});
+    render();
+  };
+  $('pixelPatterns').addEventListener('click',e=>{
+    const button=e.target.closest('[data-pattern]');
+    if(!button)return;
+    Object.assign(S,squadOfSeven(button.dataset.pattern),{sel:-1});
+    render();
+    $('pixelPatterns').querySelector(`[data-pattern="${button.dataset.pattern}"]`).focus();
+  });
   $('n').addEventListener('input',updateCount);
   $('n').addEventListener('compositionend',updateCount);
   $('n').addEventListener('blur',()=>{$('n').value=S.n;});
@@ -784,7 +831,7 @@ function init(){
   $('clear').onclick=()=>{S.free=[];S.sel=-1;render();};
   $('gMinus').onclick=()=>{S.freeR=Math.max(3,S.freeR-1);render();};
   $('gPlus').onclick=()=>{S.freeR=Math.min(40,S.freeR+1);render();};
-  $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',rank:'R4',shape:'cross',n:4,names:'',rot:0,mirror:false,ref:'neighbor',free:[],freeR:6,sel:-1});$('leader').value=S.leader;$('rank').value=S.rank;$('names').value='';render();};
+  $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',rank:'R4',...squadOfSeven(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1});$('leader').value=S.leader;$('rank').value=S.rank;$('names').value='';render();};
   $('copy').onclick=copyPlan;
   $('cancelPosition').onclick=()=>{S.sel=-1;render();};
   $('removePosition').onclick=()=>{
