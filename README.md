@@ -9,11 +9,13 @@ The leader takes position first, then every teammate gets a simple direction ("1
 Langues / Languages : Français · English · 日本語 · Bahasa Indonesia. Le mode Auto suit les langues préférées du navigateur. Un choix manuel est mémorisé. / Auto follows the browser’s preferred languages. A manual choice is remembered.
 
 ## Fonctionnalités / Features
-- Grille libre avec cinq motifs kawaii de 7 cases (1 chef et 6 coéquipiers) : chat, lapin, ourson, patte et cœur. / Free grid with five seven-tile kawaii patterns (1 leader and 6 teammates): cat, bunny, bear, paw, and heart.
+- Grille libre avec 17 motifs kawaii de 7, 14 ou 28 cases, dont un ourson, une patte, un champignon et un onigiri. / Free grid with 17 kawaii patterns for squads of 7, 14, or 28, including a bear, a paw, a mushroom, and onigiri.
 - Formes automatiques (croix, X, étoile, bloc, carré, cercle, losange, V, triangle, lignes) proposées seulement si elles sont possibles avec le nombre de coéquipiers choisi
-- 10 formes fun de 5 cases et 5 cœurs à taille fixe
 - Dessin libre sur une grille, pivoter, miroir
-- Jusqu'à 100 coéquipiers en plus du chef, y compris sur la grille libre, avec des pseudos personnalisés
+- Dix motifs de 14 ou 28 cases avec émoticônes, Pac-Man, cœurs, étoile à cinq branches et flèche. / Ten patterns for squads of 14 or 28, including emoticons, Pac-Man, hearts, a five-pointed star, and an arrow.
+- Épées médiévales, maisons et villes de 14 à 100 cases. / Medieval swords, houses, and city skylines for squads of 14 to 100.
+- Six motifs militaires déclinés en 14, 28 et 56 ou 100 cases : tronçonneuse, missile, char à canon, avion, grenade et hélicoptère. / Six military patterns with variants for squads of 14, 28, and 56 or 100: chainsaw, missile, tank, airplane, grenade, and helicopter.
+- Effectifs de 7, 14, 28, 56 ou 100 personnes, chef compris, avec pseudos personnalisés
 - Plan à copier dans le chat d'alliance
 
 ## Utilisation
