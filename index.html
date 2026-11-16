@@ -152,7 +152,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
 .pixel-pattern{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;text-align:start;padding:6px 9px;min-height:52px}
 .pixel-preview{display:grid;gap:1px;padding:3px;background:var(--map-bed)}
 .pixel-preview span{width:5px;height:5px;background:var(--map-tile)}
-.pixel-preview .member{background:#a5bb79}
+.pixel-preview .member{background:#f3a8bb}
 .pixel-preview .leader{background:#ffd366}
 </style>
 </head>
@@ -200,7 +200,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         <p class="hint" id="fixedInfo" hidden></p>
 
         <div id="nBox">
-          <span class="lbl" data-t="nL">Nombre de coéquipiers (jusqu'à 500)</span>
+          <span class="lbl" data-t="nL">Nombre de coéquipiers (jusqu'à 100)</span>
           <div class="step">
             <button class="btn sq" id="nMinus" type="button" data-ta="nMinusA" aria-label="Un coéquipier de moins">−</button>
             <input id="n" type="text" inputmode="numeric" data-ta="nL">
@@ -293,15 +293,16 @@ const HEARTS=['h_mini','h_line','h_fill','h_big','h_bigline'];   // cœurs dessi
 const FIXED=new Set([...FUN,...HEARTS]);
 const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le chef'}];
 const KEY='rokens-arte-last-war-v1';
-const clampN=n=>Math.min(500,Math.max(1,Math.round(+n)||1));
+const MAX_TEAMMATES=100;
+const clampN=(n,min=1)=>Math.min(MAX_TEAMMATES,Math.max(min,Math.round(+n)||min));
 const PIXEL_PATTERNS={
-  robot:['XXX','XCX','.X.'],
-  rocket:['.X.','XCX','.X.','X.X'],
-  alien:['X.X','.C.','XXX','.X.'],
-  sword:['..X','..X','XCX','.X.','X..'],
-  tank:['.X..','XXCX','.XX.']
+  cat:['X.X.','XCX.','.X.X'],
+  bunny:['.X.X.','.X.X.','.XCX.'],
+  bear:['X...X','.XCX.','.X.X.'],
+  paw:['X.X.X','.XCX.','..X..'],
+  heart:['X.X','XXX','.C.','.X.']
 };
-const squadOfSeven=(pattern='robot')=>({
+const squadOfSeven=(pattern='cat')=>({
   shape:'free',n:6,free:sortCells(parsePat(PIXEL_PATTERNS[pattern])),freeR:4
 });
 
@@ -318,14 +319,14 @@ function detectLang(){
 }
 const I18N={
 fr:{
- pixelPatterns:"Motifs pixel art de 7 cases",pixelNames:{"robot": "Robot", "rocket": "Fusée", "alien": "Alien", "sword": "Épée", "tank": "Char"},
+ pixelPatterns:"Motifs kawaii de 7 cases",pixelNames:{"cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur"},
  squadOfSeven:"Escadron de 7 (chef + 6)",
  languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
  title:"Formations d'escadron",
  sub:"Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.",
  setup:"Votre escadron",leaderL:"Chef d'escadron et grade",leaderPh:"Pseudo du chef",
- shapeL:"Forme à dessiner",nL:"Nombre de coéquipiers (jusqu'à 500)",
+ shapeL:"Forme à dessiner",nL:"Nombre de coéquipiers (jusqu'à 100)",
  nMinusA:"Un coéquipier de moins",nPlusA:"Un coéquipier de plus",
  freeL:"Dessin libre",gMinus:"Grille −",gPlus:"Grille +",clear:"Tout vider",
  namesL:"Pseudos des coéquipiers (un par ligne, facultatif)",refL:"Comment chacun se repère ?",
@@ -363,14 +364,14 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
- pixelPatterns:"Seven-tile pixel art patterns",pixelNames:{"robot": "Robot", "rocket": "Rocket", "alien": "Alien", "sword": "Sword", "tank": "Tank"},
+ pixelPatterns:"Seven-tile kawaii patterns",pixelNames:{"cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart"},
  squadOfSeven:"Squad of 7 (leader + 6)",
  languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
  title:"Squad formations",
  sub:"Last War · RokenS ART3 — the leader takes position, every teammate gets simple directions.",
  setup:"Your squad",leaderL:"Squad leader and rank",leaderPh:"Leader name",
- shapeL:"Shape to draw",nL:"Number of teammates (up to 500)",
+ shapeL:"Shape to draw",nL:"Number of teammates (up to 100)",
  nMinusA:"One teammate less",nPlusA:"One teammate more",
  freeL:"Free drawing",gMinus:"Grid −",gPlus:"Grid +",clear:"Clear all",
  namesL:"Teammate names (one per line, optional)",refL:"How does everyone find their spot?",
@@ -416,14 +417,14 @@ en:{
  }
 },
 ja:{
- pixelPatterns:"7マスのドット絵",pixelNames:{"robot": "ロボット", "rocket": "ロケット", "alien": "宇宙人", "sword": "剣", "tank": "戦車"},
+ pixelPatterns:"7マスのかわいいドット絵",pixelNames:{"cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート"},
  squadOfSeven:"7人編成（リーダー＋6人）",
  languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
  title:"部隊フォーメーション",
  sub:"Last War · RokenS ART3 — リーダーを中心に、各メンバーの配置を決められます。",
  setup:"部隊の設定",leaderL:"部隊リーダーとランク",leaderPh:"リーダー名",
- shapeL:"作る形",nL:"メンバー数（最大500）",
+ shapeL:"作る形",nL:"メンバー数（最大100）",
  nMinusA:"メンバーを1人減らす",nPlusA:"メンバーを1人増やす",
  freeL:"自由描画",gMinus:"グリッド −",gPlus:"グリッド +",clear:"全消去",
  namesL:"メンバー名（1行に1人、任意）",refL:"各自の位置の基準は？",
@@ -469,14 +470,14 @@ ja:{
  }
 },
 id:{
- pixelPatterns:"Pola seni piksel 7 petak",pixelNames:{"robot": "Robot", "rocket": "Roket", "alien": "Alien", "sword": "Pedang", "tank": "Tank"},
+ pixelPatterns:"Pola kawaii 7 petak",pixelNames:{"cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati"},
  squadOfSeven:"Skuad 7 orang (pemimpin + 6)",
  languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
  title:"Formasi skuad",
  sub:"Last War · RokenS ART3 — pemimpin menempati posisi lebih dulu, setiap anggota mendapat petunjuk sederhana.",
  setup:"Skuadmu",leaderL:"Pemimpin skuad dan pangkat",leaderPh:"Nama pemimpin",
- shapeL:"Bentuk yang dibuat",nL:"Jumlah anggota (maks. 500)",
+ shapeL:"Bentuk yang dibuat",nL:"Jumlah anggota (maks. 100)",
  nMinusA:"Kurangi satu anggota",nPlusA:"Tambah satu anggota",
  freeL:"Gambar bebas",gMinus:"Grid −",gPlus:"Grid +",clear:"Hapus semua",
  namesL:"Nama anggota (satu per baris, opsional)",refL:"Patokan posisi tiap anggota?",
@@ -705,12 +706,16 @@ function renderControls(plan){
   $('shapesHint').hidden=free||fixed;
   chips($('refs'),REFS.map(x=>({id:x.id,label:l.refs[x.id]})),S.ref,'ref');
   $('refHint').textContent=S.ref==='leader'?l.refLeader:l.refNeighbor;
-  $('nBox').hidden=free||fixed;
+  $('nBox').hidden=fixed;
   $('freeTools').hidden=!free;
   $('edit').hidden=free;
-  if(document.activeElement!==$('n'))$('n').value=S.n;
   const k=plan.names.length,total=plan.members.length;
-  $('nameInfo').innerHTML=(k?esc(l.nameInfo(k,total)):'')+(k&&!free&&!fixed&&k!==S.n?' <button type="button" class="link" id="fitNames">'+esc(l.fit(k))+'</button>':'');
+  const count=free?total:S.n;
+  if(document.activeElement!==$('n'))$('n').value=count;
+  $('nMinus').disabled=count<=(free?0:1);
+  $('nPlus').disabled=count>=MAX_TEAMMATES;
+  const fitCount=clampN(k);
+  $('nameInfo').innerHTML=(k?esc(l.nameInfo(k,total)):'')+(k&&!fixed&&fitCount!==count?' <button type="button" class="link" id="fitNames">'+esc(l.fit(fitCount))+'</button>':'');
 }
 
 /* ==== E-MANUEL-06 · COPIE DU PLAN ==== */
@@ -744,8 +749,9 @@ function load(){
       S.languageMode=r.languageMode;
       S.lang=r.languageMode;
     }
-    if(Array.isArray(r.free))S.free=r.free.filter(p=>Array.isArray(p)&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&(p[0]||p[1])&&Math.abs(p[0])<=500&&Math.abs(p[1])<=500).slice(0,500);
+    if(Array.isArray(r.free))S.free=r.free.filter(p=>Array.isArray(p)&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&(p[0]||p[1])&&Math.abs(p[0])<=500&&Math.abs(p[1])<=500);
     if(!r.freeOrdered)sortCells(S.free);
+    S.free=S.free.slice(0,MAX_TEAMMATES);
     S.freeR=Math.min(40,Math.max(3,Math.round(+r.freeR)||6));
   }catch(e){}
 }
@@ -780,13 +786,25 @@ function init(){
   $('leader').addEventListener('input',e=>{S.leader=e.target.value;render();});
   $('rank').addEventListener('input',e=>{S.rank=e.target.value;render();});
   $('names').addEventListener('input',e=>{S.names=e.target.value;render();});
-  const updateCount=e=>{
-    if(e.isComposing)return;
-    const count=e.target.value.normalize('NFKC').trim();
-    if(!/^\d+$/.test(count))return;
-    const n=clampN(count);
-    if(n===S.n)return;
-    S.n=n;S.sel=-1;render();
+  const currentCount=()=>S.shape==='free'?S.free.length:S.n;
+  const setCount=value=>{
+    const free=S.shape==='free';
+    const count=clampN(value,free?0:1);
+    if(count===currentCount())return;
+    if(free){
+      const extra=count-S.free.length;
+      if(extra>0){
+        // An 11×11 grid offers 120 slots around the leader.
+        const occupied=new Set(S.free.map(cell=>cell.join(',')));
+        const open=sortCells(cellsWhere((x,y)=>!occupied.has(`${x},${y}`),5));
+        S.free.push(...open.slice(0,extra));
+      }else{
+        S.free.length=count;
+      }
+    }
+    S.n=clampN(count);
+    S.sel=-1;
+    render();
   };
   $('squadOfSeven').onclick=()=>{
     Object.assign(S,squadOfSeven(),{sel:-1});
@@ -799,11 +817,16 @@ function init(){
     render();
     $('pixelPatterns').querySelector(`[data-pattern="${button.dataset.pattern}"]`).focus();
   });
-  $('n').addEventListener('input',updateCount);
-  $('n').addEventListener('compositionend',updateCount);
-  $('n').addEventListener('blur',()=>{$('n').value=S.n;});
-  $('nMinus').onclick=()=>{S.n=clampN(S.n-1);S.sel=-1;render();};
-  $('nPlus').onclick=()=>{S.n=clampN(S.n+1);S.sel=-1;render();};
+  $('n').addEventListener('blur',e=>{
+    const value=e.target.value.normalize('NFKC').trim();
+    if(/^\d+$/.test(value))setCount(value);
+    e.target.value=currentCount();
+  });
+  $('n').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229)e.target.blur();
+  });
+  $('nMinus').onclick=()=>setCount(currentCount()-1);
+  $('nPlus').onclick=()=>setCount(currentCount()+1);
   ['shapes','funShapes','heartShapes'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('[data-shape]');if(!b)return;S.shape=b.dataset.shape;S.sel=-1;render();}));
   $('refs').addEventListener('click',e=>{const b=e.target.closest('[data-ref]');if(!b)return;S.ref=b.dataset.ref;render();});
   $('langs').addEventListener('click',e=>{
@@ -819,7 +842,7 @@ function init(){
     S.lang=detectLang();
     render();
   });
-  $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames'){S.n=clampN(buildPlan().names.length);S.sel=-1;render();}});
+  $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames')setCount(clampN(buildPlan().names.length));});
   $('rot').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-y,x]);else S.rot=(S.rot+1)%4;S.sel=-1;render();};
   $('mir').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-x,y]);else S.mirror=!S.mirror;S.sel=-1;render();};
   $('edit').onclick=()=>{
@@ -860,7 +883,7 @@ function init(){
         S.freeR=3;
       }
       S.free[S.sel]=[x,y];
-    }else if(S.shape==='free'&&S.free.length<500){
+    }else if(S.shape==='free'&&S.free.length<MAX_TEAMMATES){
       S.free.push([x,y]);
     }else return;
     S.sel=-1;

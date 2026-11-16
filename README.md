@@ -9,11 +9,11 @@ The leader takes position first, then every teammate gets a simple direction ("1
 Langues / Languages : Français · English · 日本語 · Bahasa Indonesia. Le mode Auto suit les langues préférées du navigateur. Un choix manuel est mémorisé. / Auto follows the browser’s preferred languages. A manual choice is remembered.
 
 ## Fonctionnalités / Features
-- Grille libre avec cinq motifs pixel art de 7 cases (1 chef et 6 coéquipiers) : robot, fusée, alien, épée et char. / Free grid with five seven-tile pixel art patterns (1 leader and 6 teammates): robot, rocket, alien, sword, and tank.
+- Grille libre avec cinq motifs kawaii de 7 cases (1 chef et 6 coéquipiers) : chat, lapin, ourson, patte et cœur. / Free grid with five seven-tile kawaii patterns (1 leader and 6 teammates): cat, bunny, bear, paw, and heart.
 - Formes automatiques (croix, X, étoile, bloc, carré, cercle, losange, V, triangle, lignes) proposées seulement si elles sont possibles avec le nombre de coéquipiers choisi
 - 10 formes fun de 5 cases et 5 cœurs à taille fixe
 - Dessin libre sur une grille, pivoter, miroir
-- Jusqu'à 500 coéquipiers, pseudos personnalisés
+- Jusqu'à 100 coéquipiers en plus du chef, y compris sur la grille libre, avec des pseudos personnalisés
 - Plan à copier dans le chat d'alliance
 
 ## Utilisation
