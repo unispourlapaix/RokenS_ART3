@@ -108,14 +108,16 @@ summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}
 :root{--pixel-shadow:#ad9974;--map-bed:#30271b;--map-tile:#595238;--map-alt:#685139;--map-olive:#52563a;--map-rust:#744d35;--map-line:#34291c;--tile-edge:#c9b17e}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pixel-shadow:#120e08}}
 :root[data-theme="dark"]{--pixel-shadow:#120e08}
-body{background-image:repeating-linear-gradient(0deg,transparent 0 31px,var(--line) 31px 32px),repeating-linear-gradient(90deg,transparent 0 31px,var(--line) 31px 32px)}
-header{background:#30291f;color:#fff1da;padding:20px 22px 16px;margin:0 0 18px;border:2px solid #9d784b;border-left:6px solid #edb451;box-shadow:4px 4px 0 var(--pixel-shadow)}
-header{
+body{
   background-image:
-    linear-gradient(90deg,#30291ff2 0%,#30291fd9 40%,#30291f99 100%),
-    conic-gradient(from 90deg at 65% 42%,#896039 25%,#61543a 0 50%,#4e4230 0 75%,#714b35 0);
-  background-size:auto,96px 64px;
-  background-position:0 0,right top;
+    linear-gradient(color-mix(in srgb,var(--bg) 92%,transparent),color-mix(in srgb,var(--bg) 92%,transparent)),
+    var(--camo-texture,none);
+}
+header{
+  background-color:#30291f;
+  background-image:linear-gradient(105deg,#24241eee 0%,#24241ed9 38%,#24241e65 100%),var(--camo-texture,none);
+  color:#fff1da;padding:20px 22px 16px;margin:0 0 18px;
+  border:2px solid #8e7655;border-left:6px solid #edb451;box-shadow:4px 4px 0 var(--pixel-shadow)
 }
 header .sub{color:#e3c8a0}
 header .lang{margin-bottom:0}
@@ -126,12 +128,16 @@ header .chip[aria-pressed="true"]{background:#edb451;color:#30291f}
 .btn,.chip{border-width:2px}
 .btn:hover:not(:disabled),.chip:hover{border-color:var(--sel)}
 .btn:disabled{opacity:.55;cursor:default}
-.mapbox{background:var(--map-bed);border:3px solid #9d784b;padding:8px}
-.gc{fill:var(--map-tile);stroke:var(--map-line);shape-rendering:crispEdges}
+.mapbox{
+  background-color:var(--map-bed);
+  background-image:linear-gradient(#211e17a8,#211e17a8),var(--camo-texture,none);
+  border:3px solid #8e7655;padding:8px
+}
+.gc{fill:var(--map-tile);fill-opacity:.86;stroke:var(--map-line);shape-rendering:crispEdges}
 .gc.earth{fill:var(--map-alt)}
 .gc.olive{fill:var(--map-olive)}
 .gc.rust{fill:var(--map-rust)}
-#map.free .gc:hover,#map.placing .gc:hover{fill:#94643e}
+#map.free .gc:hover,#map.placing .gc:hover{fill:#94643e;fill-opacity:1}
 #map.placing .gc{cursor:crosshair}
 .lk{stroke:#d4bd96}
 .mb .token{fill:#393921;stroke:var(--tile-edge);stroke-width:2}
@@ -775,6 +781,43 @@ function planText(plan){
 /* ==== E-MANUEL-04 · CARTE ==== */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function applyCamouflageTexture(){
+  const tile=document.createElement('canvas');
+  const size=256;
+  tile.width=tile.height=size;
+  const ctx=tile.getContext('2d');
+  if(!ctx)return;
+
+  let seed=709;
+  const next=limit=>{
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+    return Math.floor(seed/4294967296*limit);
+  };
+  const colors=['#353630','#535440','#6f6a4f','#897850','#63503d'];
+  const block=8;
+  const blocks=size/block;
+  ctx.fillStyle=colors[1];
+  ctx.fillRect(0,0,size,size);
+
+  // Wrap clusters across the tile edges so the repeat has no hard seam.
+  for(let i=0;i<85;i++){
+    const x=next(blocks),y=next(blocks);
+    const width=2+next(9),height=1+next(5);
+    ctx.fillStyle=colors[next(colors.length)];
+    for(let row=0;row<height;row++){
+      const inset=next(3);
+      for(let col=inset;col<width;col++){
+        ctx.fillRect((x+col)%blocks*block,(y+row)%blocks*block,block,block);
+      }
+    }
+  }
+  for(let i=0;i<1800;i++){
+    ctx.fillStyle=i%2?'#f5e9c421':'#15171336';
+    ctx.fillRect(next(size),next(size),1+next(3),1);
+  }
+  document.documentElement.style.setProperty('--camo-texture',`url("${tile.toDataURL()}")`);
+}
+
 const CAMOUFLAGE=[
   ['olive','olive','earth','earth','rust','rust','earth','olive'],
   ['olive','earth','earth','','','rust','rust','olive'],
@@ -920,6 +963,7 @@ function render(){
   save();
 }
 function init(){
+  applyCamouflageTexture();
   S.lang=detectLang();
   load();
   $('leader').value=S.leader;$('rank').value=S.rank;$('names').value=S.names;
