@@ -166,8 +166,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
 .pixel-preview{display:grid;gap:1px;padding:3px;background:var(--map-bed)}
 .pixel-library{margin:0 0 12px}
 .pixel-library .pixel-patterns{margin:6px 0 0}
-.pixel-pattern small{display:block;color:var(--muted)}
-.pixel-preview span{width:var(--preview-pixel,5px);height:var(--preview-pixel,5px);background:var(--map-tile)}
+.pixel-preview span{width:5px;height:5px;background:var(--map-tile)}
 .pixel-preview .member{background:#c5774d}
 .pixel-preview .leader{background:#ffdb8e}
 </style>
@@ -203,27 +202,22 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         </div>
 
         <div class="wrapbtn">
-          <button class="btn" id="squadOfEight" type="button" data-t="squadOfEight"></button>
+          <button class="btn" id="squadOfEight" type="button" data-t="squadOfEight">Créer une flèche de 8</button>
         </div>
 
         <span class="lbl" data-t="shapeL">Forme à dessiner</span>
         <div class="chips" id="shapes"></div>
         <p class="hint" id="shapesHint" data-t="shapesHint"></p>
-        <div id="heartGroup" hidden>
-          <span class="lbl" data-t="heartL">Cœurs · taille fixe</span>
-          <div class="chips" id="heartShapes"></div>
-        </div>
-        <p class="hint" id="fixedInfo" hidden></p>
-
         <label class="lbl" for="n" data-t="nL">Effectif total (chef compris)</label>
-        <select id="n">
+        <select id="n" aria-describedby="squadCount">
+          <option value="8" selected>8</option>
           <option value="7">7</option>
-          <option value="8">8</option>
           <option value="14">14</option>
           <option value="28">28</option>
           <option value="56">56</option>
           <option value="100">100</option>
         </select>
+        <p class="hint" id="squadCount">1 chef et 7 coéquipiers</p>
 
         <div id="freeTools" hidden>
           <span class="lbl" data-t="freeL">Dessin libre</span>
@@ -255,13 +249,14 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
       <section class="panel" id="E-MANUEL-11-carte">
         <h2 data-t="mapH">La forme sur la carte</h2>
         <div id="pixelPatterns" role="group" data-ta="pixelPatterns">
+          <p class="hint" data-t="pixelPatterns">Motifs pixel art de 8 points</p>
           <div class="pixel-patterns" id="smallPatterns"></div>
           <details class="pixel-library">
-            <summary data-t="miniPatterns">Plus de petits motifs · 7 cases</summary>
+            <summary data-t="miniPatterns">Objets et petits symboles</summary>
             <div class="pixel-patterns" id="miniPatterns"></div>
           </details>
           <details class="pixel-library">
-            <summary data-t="morePatterns">Motifs détaillés</summary>
+            <summary data-t="morePatterns">Animaux et motifs kawaii</summary>
             <div class="pixel-patterns" id="detailedPatterns"></div>
           </details>
           <details class="pixel-library">
@@ -269,7 +264,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
             <div class="pixel-patterns" id="symbolPatterns"></div>
           </details>
           <details class="pixel-library">
-            <summary data-t="letterPatterns">Alphabet · 14 cases par lettre</summary>
+            <summary data-t="letterPatterns">Alphabet</summary>
             <div class="pixel-patterns" id="letterPatterns"></div>
           </details>
           <details class="pixel-library">
@@ -277,7 +272,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
             <div class="pixel-patterns" id="buildingPatterns"></div>
           </details>
           <details class="pixel-library">
-            <summary data-t="militaryPatterns">Motifs militaires · 14, 28, 56 et 100 cases</summary>
+            <summary data-t="militaryPatterns">Motifs militaires</summary>
             <div class="pixel-patterns" id="militaryPatterns"></div>
           </details>
         </div>
@@ -336,112 +331,107 @@ const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le che
 const KEY='rokens-arte-last-war-v1';
 const SQUAD_SIZES=[7,8,14,28,56,100];
 const tierFor=count=>SQUAD_SIZES.find(size=>size>=count+1)??SQUAD_SIZES.at(-1);
-const KAWAII_PATTERNS={
+const STARTER_PATTERNS={
   arrow8:['..X..','.XXX.','..C..','..X..','..X..','..X..'],
   heart8:['.X.X.','.XCX.','.X.X.','..X..'],
-  cat:['X.X.','XCX.','.X.X'],
-  bunny:['.X.X.','.X.X.','.XCX.'],
-  bear:['X...X','.XCX.','.X.X.'],
-  paw:['X.X.X','.XCX.','..X..'],
-  heart:['X.X','XXX','.C.','.X.'],
-  mushroom:['.XXX.','XXXXX','.XCX.','.XXX.'],
-  ghost:['.XXX.','XX.XX','XXCXX','X...X'],
-  chick:['..XX.','.XXXX','.XCX.','XXXXX'],
-  frog:['X...X','XXXXX','X.C.X','XX.XX'],
-  flower:['.XXX.','XXCXX','.XXX.','..X..','.X.X.'],
-  onigiri:['...X...','..XXX..','.XXCXX.','.XXXXX.'],
-  strawberry:['.X.X.','XXXXX','.XCX.','.XXX.','..X..'],
-  fish:['..XXX..','XXXCXX.','.XXXX..','..X....'],
-  catFace:['XX...XX','XXX.XXX','XXXXXXX','XX.C.XX','.XXXXX.','...X...'],
-  penguin:['..XXX..','.XXXXX.','XX.X.XX','XXXCXXX','.XXXXX.','.X.X.X.'],
-  octopus:['.XXXX.','XXXXXX','X.XX.X','XXCXXX','XXXXXX','X....X'],
-  bearFace:['XX...XX','.XXXXX.','XXXXXXX','XX.C.XX','.XXXXX.','..X.X..'],
+};
+const KAWAII_PATTERNS={
+  cat:['X.X.','XCX.','.X.X','..X.'],
+  bunny:['.X.X.','.X.X.','.XCX.','..X..'],
+  bear:['X...X','.XCX.','.XXX.'],
+  paw:['X.X.X.','.XCXX.','..X...'],
+  heart:['XX.XX','.XCX.','..X..'],
+  mushroom:['.XXX.','XXCXX'],
+  ghost:['.XXX.','.XCX.','.X.X.'],
+  chick:['..XX.','..XX.','.XCXX'],
+  frog:['X...X','.XXX.','X.C.X'],
+  flower:['..X..','.XCX.','..X..','.XXX.'],
+  onigiri:['..X..','.XXX.','X.CX.','..X..'],
+  strawberry:['.X.X.','.XXX.','.CX..','..X..'],
+  fish:['.XX..','XXCXX','.X...'],
+  catFace:['X...X','.XCX.','.X.XX'],
+  penguin:['..X..','.XCX.','.X.X.','.X.X.'],
+  octopus:['.XXX.','.XCX.','X...X'],
+  bearFace:['XX.XX','..C..','.XXX.']
 };
 const MINI_PATTERNS={
-  miniMushroom:['.XXX.','.XCX.','..X..'],
-  miniGhost:['.XXX.','.C.X.','.X.X.'],
-  miniFish:['..X..','XCXXX','..X..'],
-  miniArrow:['..X..','.XCX.','..X..','..X..','..X..'],
-  miniFlower:['..X..','.XCX.','..X..','.X.X.'],
-  miniCrown:['X.X.X','.XCX.','..X..'],
-  miniSailboat:['..X..','.CX..','.XXXX'],
-  miniRocket:['..X..','.XCX.','.X.X.','..X..'],
-  miniBow:['X...X','XXCXX'],
-  miniNote:['..XXX','..X..','..X..','.XC..'],
-  miniHouse:['..X..','.XXX.','.XCX.'],
-  miniSword:['..X..','..X..','..X..','.XCX.','..X..']
+  miniMushroom:['XXXXX','.XCX.'],
+  miniGhost:['.XXX.','.C.X.','XXX..'],
+  miniFish:['..X..','XCXXX','.X.X.'],
+  miniArrow:['..X..','.XXX.','X.C.X','..X..'],
+  miniFlower:['..X..','.XCX.','..X..','X.X.X'],
+  miniCrown:['X.X.X','XXXCX'],
+  miniSailboat:['..X..','.XC..','XXXXX'],
+  miniRocket:['..X..','.XCX.','.XXX.','..X..'],
+  miniBow:['X...X','XXCXX','..X..'],
+  miniNote:['..XXX','..X..','..X..','..X..','.XC..'],
+  miniHouse:['..X..','.XXX.','.XCX.','.X...'],
+  miniSword:['..X..','..X..','..X..','XXCXX']
 };
 const SYMBOL_PATTERNS={
-  artWord:['.XX..XXX..XXXX.XXXX','X..X.X..X..XX.....X','X..X.XXX...XX...XX.','XXXX.X.C...XX.....X','X..X.X..X..XX..X..X','X..X.X..X..XX..XXXX'],
-  smile:['..X...X..','.XX...XX.','.........','.X..C..X.','..XXXXX..'],
-  wink:['XX...XXX','........','X..C...X','.XXXXXX.'],
-  heartEyes:['XX.XX...XX.XX','XXXXX...XXXXX','.XXX.....XXX.','......C......','.....XXX.....'],
-  pacman:['.XXX..','XXXX..','XC....','XX....','.XXX..'],
-  pacman28:['..XXXX..','.XXXXXX.','XXXCXX..','XXX.....','.XXXX...','..XXXXX.'],
-  heartOutline:['.XX.XX.','X..C..X','X.....X','.X...X.','..X.X..','...X...'],
-  heartFull:['..X..X..','XXX..XXX','XXXCXXXX','.XXXXXX.','..XXXX..','...XX...'],
-  doubleHeart:['.XX.XX...XX.XX.','X..C..X.X..X..X','X.....X.X.....X','.X...X...X...X.','..X.X.....X.X..','...X.......X...'],
-  fivePointStar:['....X....','....X....','...XXX...','...XXX...','XXXXXXXXX','..XXCXX..','..XX.XX..','..X...X..'],
-  arrow:['...X...','..XXX..','.XXXXX.','..XCX..','...X...','...X...']
+  smile:['X...X','.....','X.C.X','.XXX.'],
+  wink:['XX..X','.....','..C..','XXXX.'],
+  heartEyes:['XX...XX','.X...X.','...C...','...X...'],
+  pacman:['.XXX.','XC...','XX...','.X...'],
+  heartOutline:['XX.XX','X...X','..C..','..X..'],
+  heartFull:['.X.X.','XXXCX','..X..'],
+  doubleHeart:['X.X.X.X','.CX.XX.'],
+  fivePointStar:['..X..','X...X','.XCX.','X...X'],
+  arrow:['..X..','.XXX.','..C..','..X..','.X.X.']
 };
 const BUILDING_PATTERNS={
-  medievalSword:['..X..','.XXX.','.XXX.','XXCXX','..X..','..X..'],
-  crossedSwords:['XX.....XX','.XX...XX.','..XX.XX..','...XCX...','...XXX...','..XX.XX..','.XX...XX.','.X.....X.'],
-  house:['..X..','.XXX.','XXXXX','X.C.X','X...X'],
-  house28:['...X...','..XXX..','.XXXXX.','XXXXXXX','.XXCXX.','.X.X.X.','.XX.XX.'],
-  cityscape:['.......X.......','......XXX......','.XXX.XXXXX.....','.X.X.X.X.X.XXX.','.XXX.XXXXX.X.X.','.XXX.XXXXX.XXX.','XXXXXXXCXXXXXXX'],
-  cityscape100:['.......X...........','.XX...XXX....X.....','XXXX.XXXXX.XXXX....','X.XX.XX.XX.XXXX.XXX','XXXX.XXXXX.XXXX.XXX','XX.X.XXXXX.XXXX.XXX','XXXX.XXXXX.XXXX.XXX','XXXXXXXXXCXXXXXXXXX']
+  medievalSword:['..X..','..X..','.XCX.','..X..','.XX..'],
+  crossedSwords:['X...X','.X.X.','..C..','.X.X.','X....'],
+  house:['..X..','.XXX.','X.C.X','X....'],
+  cityscape:['..X..','X.X..','X.C.X','X...X']
 };
 const MILITARY_PATTERNS={
-  chainsaw14:['.XXX....','X...X...','XXCXXXXX','...X....'],
-  missile14:['..X..','.XXX.','.XCX.','XXXXX','X...X'],
-  tank14:['.XXX...','.XCXXXX','XXXXX..'],
-  plane14:['...X...','..XXX..','XXXCXXX','...X...','..X.X..'],
-  grenade14:['...XX','..XXX','.XCX.','XXXX.','.XX..'],
-  helicopter14:['..XXXXX','....X..','.XXCXX.','..XXX..'],
-  chainsaw28:['..XXX.....','.XX.XX....','XXXCXXXXXX','XXXXXXXX..','..X...X.X.'],
-  missile28:['...X...','..XXX..','..XXX..','.XXXXX.','.XXCXX.','.XXXXX.','XX...XX','X.....X'],
-  tank28:['..XXXX....','.XXCXXXXXX','XXXXXXX...','XX...XX...','.XXXX.....'],
-  plane28:['....X....','...XXX...','..XXXXX..','XXXXCXXXX','....X....','...XXX...','.XXX.XXX.'],
-  grenade28:['....XXX','...XX.X','..XXXXX','.XXXXX.','.XXCXX.','.XXXXX.','..X.X..'],
-  helicopter28:['..XXXXXXX.','.....X....','...XXXXX..','.XXXXCXXXX','..XXXX....','...X..X...'],
-  chainsaw:['..XXXX..........','.XX..XX.........','.XXXXXX..X.X.X.X','XXXXCXXXXXXXXXX.','XXXXXXXXXXXXXXXX','.XXXXX...X...X..'],
-  missile:['.....X....','....XXX...','....XXX...','...XXXXX..','...XXXXX..','...XXCXX..','...XXXXX..','...XXXXX..','..XXXXXXX.','.XXXXXXXXX','.XX..X..XX','.....X....','....X.X...'],
-  tank:['......XXXXXX............','....XXXXXXXXXX......XXXX','....XXXXXCXXXXXXXXXXXXXX','..XXXXXXXXXXXX..........','XXXXXXXXXXXXXXXXXXX.....','XX.XX.XX.XX.XX.XX.XX....','.XXXXXXXXXXXXXXX........'],
-  plane:['.......X.......','......XXX......','......XXX......','......XXX......','.....XXXXX.....','...XXXXXXXXX...','XXXXXXXCXXXXXXX','.......X.......','......XXX......','....XXXXXXX....','....XXX.XXX....'],
-  grenade:['......XX..','.....XX.XX','....XXXXXX','...XXXX...','..XXXXXX..','.XXXXXXXX.','.XXXCXXXX.','.XXXXXXXX.','..XXXXXX..','...XXXX...'],
-  helicopter:['.....XXXXXXXXXX...','..........X.......','.......XXXX....XX.','....XXXXXXXXXXXXXX','...XXXXXXCXXXX....','....XXXXXX........','......X..X........','.....XXXXXX.......']
+  chainsaw:['.XX.....','XCXXXX..'],
+  missile:['..X..','.XCX.','.XXX.','..X..'],
+  tank:['XX.....','.CXXX..','XX.....'],
+  plane:['..X..','.XCX.','X.X.X','..X..'],
+  grenade:['...X.','..XX.','.XCX.','.XX..'],
+  helicopter:['XXXXX','..X..','.CX..']
 };
 const LETTER_PATTERNS={
-  'glyph-A':['.XX.','X..X','X..X','XCXX','X..X','X..X'],
-  'glyph-B':['XXX.','X..X','XCX.','X..X','X..X','XX..'],
-  'glyph-C':['.XXX','XX..','XC..','XX..','XX..','.XXX'],
-  'glyph-D':['XXX.','X..X','C..X','X..X','X..X','XXX.'],
-  'glyph-E':['XXXX','X...','XCX.','X...','X...','XXXX'],
-  'glyph-F':['XXXX','XX..','XCX.','XX..','XX..','X...'],
-  'glyph-G':['.XXX','X...','X...','X.CX','X..X','XXXX'],
-  'glyph-H':['X..X','X..X','XCXX','X..X','X..X','X..X'],
-  'glyph-I':['XXXX','.XX.','.CX.','.XX.','XXXX'],
-  'glyph-J':['.XXX','..XX','..CX','..XX','X.XX','.XX.'],
-  'glyph-K':['X..X','X.X.','XC..','XXX.','X.X.','XX.X'],
-  'glyph-L':['XX..','XX..','XC..','XX..','XX..','XXXX'],
-  'glyph-M':['X...X','XX.XX','X.C.X','X...X','X...X','X....'],
-  'glyph-N':['X..X','XX.X','XC.X','X.XX','X..X','X...'],
-  'glyph-O':['.XX.','XC.X','X..X','X..X','X.XX','.XX.'],
-  'glyph-P':['XXX.','X..X','X..X','XCX.','XX..','XX..'],
-  'glyph-Q':['.XX.','X..X','C..X','X..X','XXXX','..XX'],
-  'glyph-R':['XXX.','X..X','XCX.','X.X.','X..X','X..X'],
-  'glyph-S':['.XXX','XX..','XCX.','..XX','...X','XXX.'],
-  'glyph-T':['XXXX','.XX.','.CX.','.XX.','.XX.','.XX.'],
-  'glyph-U':['X..X','X..X','C..X','X..X','XX.X','.XXX'],
-  'glyph-V':['X...X','X...X','X...X','XC.XX','.X.X.','.XX..'],
-  'glyph-W':['X...X','X...X','X.C.X','X.X.X','XX.XX'],
-  'glyph-X':['X..X','XX.X','.CX.','.XX.','X.XX','X..X'],
-  'glyph-Y':['X...X','XX.XX','.XCX.','..X..','..XX.','..XX.'],
-  'glyph-Z':['XXXX','..XX','..C.','.XX.','XX..','XXX.'],
-  'glyph-3':['XXXX','...X','.CX.','...X','X..X','XXXX']
+  'glyph-A':['.X.','X.X','XCX','X.X'],
+  'glyph-B':['XX.','X.X','XC.','XX.'],
+  'glyph-C':['XXX','X..','C..','X..','.XX'],
+  'glyph-D':['XX.','C.X','X.X','XX.'],
+  'glyph-E':['XX.','X..','XC.','X..','XX.'],
+  'glyph-F':['XXX','X..','XC.','X..','X..'],
+  'glyph-G':['.XX','X..','C.X','X.X','.X.'],
+  'glyph-H':['X..X','XCXX','X..X'],
+  'glyph-I':['XXX','.C.','.X.','XXX'],
+  'glyph-J':['XXX','..X','..C','X.X','.X.'],
+  'glyph-K':['X.X','XC.','X..','XX.','..X'],
+  'glyph-L':['X..','X..','C..','XX.','XXX'],
+  'glyph-M':['X...X','XC.XX','X...X'],
+  'glyph-N':['X..X','XC.X','X.XX'],
+  'glyph-O':['.CX.','X..X','X..X','.XX.'],
+  'glyph-P':['XX.','X.X','XC.','X..','X..'],
+  'glyph-Q':['.CX.','X..X','X..X','.X.X'],
+  'glyph-R':['XX.','X.X','XC.','X.X'],
+  'glyph-S':['.XX','X..','XC.','..X','XX.'],
+  'glyph-T':['XXXXX','..C..','..X..','..X..'],
+  'glyph-U':['X..X','C..X','X..X','.XX.'],
+  'glyph-V':['X...X','X...X','.C.X.','..X..','..X..'],
+  'glyph-W':['X...X','X.C.X','X.X.X'],
+  'glyph-X':['X..X','.CX.','.XX.','X..X'],
+  'glyph-Y':['X...X','.X.X.','..C..','..X..','..X..','..X..'],
+  'glyph-Z':['XXX','..X','.C.','X..','XX.'],
+  'glyph-3':['XXX','..X','.C.','..X','XX.']
 };
-const PIXEL_PATTERNS={...KAWAII_PATTERNS,...MINI_PATTERNS,...SYMBOL_PATTERNS,...BUILDING_PATTERNS,...MILITARY_PATTERNS,...LETTER_PATTERNS};
+const PATTERN_GROUPS={
+  smallPatterns:STARTER_PATTERNS,
+  miniPatterns:MINI_PATTERNS,
+  detailedPatterns:KAWAII_PATTERNS,
+  symbolPatterns:SYMBOL_PATTERNS,
+  letterPatterns:LETTER_PATTERNS,
+  buildingPatterns:BUILDING_PATTERNS,
+  militaryPatterns:MILITARY_PATTERNS,
+};
+const PIXEL_PATTERNS=Object.assign({},...Object.values(PATTERN_GROUPS));
 const pixelSquad=(pattern='arrow8')=>{
   const free=sortCells(parsePat(PIXEL_PATTERNS[pattern]));
   return {shape:'free',n:free.length,free,freeR:4};
@@ -460,8 +450,8 @@ function detectLang(){
 }
 const I18N={
 fr:{
- pixelPatterns:"Motifs pixel art",morePatterns:"Motifs détaillés · 14 et 28 cases",militaryPatterns:"Motifs militaires · 14, 28, 56 et 100 cases",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet · 14 cases par lettre",miniPatterns:"Plus de petits motifs · 7 cases",pixelNames:{"artWord": "ART3", "cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},pixelSize:n=>`${n} cases`,
- squadOfEight:"Escadron de 8 (chef + 7)",
+ pixelPatterns:"Motifs pixel art de 8 points",morePatterns:"Animaux et motifs kawaii",militaryPatterns:"Motifs militaires",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet",miniPatterns:"Objets et petits symboles",pixelNames:{"cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},
+ squadOfEight:"Créer une flèche de 8",squadCount:n=>`1 chef et ${n} coéquipiers`,
  languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
  title:"Formations d'escadron",
@@ -473,7 +463,7 @@ fr:{
  rot:"↻ Pivoter",mir:"⇋ Miroir",edit:"✎ Modifier cette forme",reset:"Réinitialiser",
  mapH:"La forme sur la carte",tabMake:"Créer",tabHelp:"Comment ça marche ?",goMake:"Créer mon escadron",helpLead:"Créez un escadron mené par un chef d'escadron et formez un groupe de coéquipiers rattachés à lui, à qui vous donnerez simplement leur position.",help:[
   "<b>Choisissez votre chef</b> (pseudo + grade) : il se place en premier, sur la case ★ au centre.",
-  "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…). Les formes fun et les cœurs ont une taille fixe.",
+  "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…).",
   "<b>Réglez le nombre de coéquipiers</b> et écrivez leurs pseudos (un par ligne, facultatif).",
   "<b>Lisez la carte</b> : chaque case numérotée est un coéquipier. Pour le déplacer, sélectionnez-le puis choisissez une case libre. Les traits pointillés montrent sur qui il se repère.",
   "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↗2 veut dire 2 cases en diagonale. Les directions sont celles de l'écran du jeu.",
@@ -503,8 +493,8 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
- pixelPatterns:"Pixel art patterns",morePatterns:"Detailed patterns · 14 and 28 tiles",militaryPatterns:"Military patterns · 14, 28, 56, and 100 tiles",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet · 14 tiles per letter",miniPatterns:"More small patterns · 7 tiles",pixelNames:{"artWord": "ART3", "cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},pixelSize:n=>`${n} tiles`,
- squadOfEight:"Squad of 8 (leader + 7)",
+ pixelPatterns:"Eight-point pixel art patterns",morePatterns:"Animals and kawaii patterns",militaryPatterns:"Military patterns",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet",miniPatterns:"Objects and small symbols",pixelNames:{"cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},
+ squadOfEight:"Create an 8-person arrow",squadCount:n=>`1 leader and ${n} teammates`,
  languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
  title:"Squad formations",
@@ -516,7 +506,7 @@ en:{
  rot:"↻ Rotate",mir:"⇋ Mirror",edit:"✎ Edit this shape",reset:"Reset",
  mapH:"The shape on the map",tabMake:"Create",tabHelp:"How does it work?",goMake:"Create my squad",helpLead:"Create a squad led by a squad leader and form a group of teammates attached to them, then give each one their position simply.",help:[
   "<b>Pick your leader</b> (name + rank): they take position first, on the ★ cell in the center.",
-  "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…). Fun shapes and hearts have a fixed size.",
+  "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…).",
   "<b>Set the number of teammates</b> and type their names (one per line, optional).",
   "<b>Read the map</b>: each numbered tile is a teammate. Select a teammate, then an empty tile to move them. Dotted lines show who they line up with.",
   "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↗2 means 2 cells diagonally. Directions are the ones on the game screen.",
@@ -554,8 +544,8 @@ en:{
  }
 },
 ja:{
- pixelPatterns:"ドット絵",morePatterns:"細かいドット絵（14・28マス）",militaryPatterns:"ミリタリーのドット絵（14・28・56・100マス）",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット（1文字14マス）",miniPatterns:"小さなドット絵をもっと見る（7マス）",pixelNames:{"artWord": "ART3", "cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},pixelSize:n=>`${n}マス`,
- squadOfEight:"8人編成（リーダー＋7人）",
+ pixelPatterns:"8マスのドット絵",morePatterns:"動物とかわいいドット絵",militaryPatterns:"ミリタリーのドット絵",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット",miniPatterns:"小物と記号",pixelNames:{"cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},
+ squadOfEight:"8人で矢印を作る",squadCount:n=>`リーダー1人とメンバー${n}人`,
  languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
  title:"部隊フォーメーション",
@@ -567,7 +557,7 @@ ja:{
  rot:"↻ 回転",mir:"⇋ 反転",edit:"✎ この形を編集",reset:"リセット",
  mapH:"配置マップ",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊リーダーが率いる部隊を作り、リーダーに付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
   "<b>リーダーを決める</b>（名前とランク）：最初に、中央の★のマスに配置します。",
-  "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。おもしろ図形とハートはサイズ固定です。",
+  "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。",
   "<b>メンバー数を設定</b>し、名前を入力します（1行に1人、任意）。",
   "<b>マップを見る</b>：番号つきのマスが各メンバーです。移動するにはメンバーを選んでから空きマスを選びます。点線は、その人が基準にする相手を示します。",
   "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↗2 は斜めに2マスという意味です。方向はゲーム画面で見えるとおりです。",
@@ -605,8 +595,8 @@ ja:{
  }
 },
 id:{
- pixelPatterns:"Pola seni piksel",morePatterns:"Pola detail · 14 dan 28 petak",militaryPatterns:"Pola militer · 14, 28, 56, dan 100 petak",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet · 14 petak per huruf",miniPatterns:"Pola kecil lainnya · 7 petak",pixelNames:{"artWord": "ART3", "cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},pixelSize:n=>`${n} petak`,
- squadOfEight:"Skuad 8 orang (pemimpin + 7)",
+ pixelPatterns:"Pola seni piksel 8 petak",morePatterns:"Hewan dan pola kawaii",militaryPatterns:"Pola militer",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet",miniPatterns:"Benda dan simbol kecil",pixelNames:{"cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},
+ squadOfEight:"Buat formasi panah 8 orang",squadCount:n=>`1 pemimpin dan ${n} anggota`,
  languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
  title:"Formasi skuad",
@@ -618,7 +608,7 @@ id:{
  rot:"↻ Putar",mir:"⇋ Cermin",edit:"✎ Ubah bentuk ini",reset:"Atur ulang",
  mapH:"Bentuk di peta",tabMake:"Buat",tabHelp:"Cara pakai",goMake:"Buat skuadku",helpLead:"Buat skuad yang dipimpin seorang pemimpin skuad, lalu bentuk kelompok anggota yang terikat padanya, dan beri setiap anggota posisinya dengan mudah.",help:[
   "<b>Pilih pemimpin</b> (nama + pangkat): dia menempati posisi lebih dulu, di kotak ★ di tengah.",
-  "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…). Bentuk seru dan hati berukuran tetap.",
+  "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…).",
   "<b>Atur jumlah anggota</b> dan tulis nama mereka (satu per baris, opsional).",
   "<b>Baca peta</b>: setiap petak bernomor adalah satu anggota. Pilih anggota, lalu pilih petak kosong untuk memindahkannya. Garis putus-putus menunjukkan patokan mereka.",
   "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↗2 berarti 2 kotak secara diagonal. Arah sesuai layar game.",
@@ -705,8 +695,7 @@ function parsePat(rows){                       // X = coéquipier, C = chef
   return out;
 }
 const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',rank:'R4',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1};
-const HCOUNT={};
-for(const k in HEART_ASCII){GEN[k]=()=>parsePat(HEART_ASCII[k]);HCOUNT[k]=parsePat(HEART_ASCII[k]).length+1;}
+for(const k in HEART_ASCII)GEN[k]=()=>parsePat(HEART_ASCII[k]);
 const RULE={   // n = nombre de coéquipiers ; une forme n'est proposée que si elle est complète et symétrique
   cross:n=>n>=4&&n%4===0, x:n=>n>=4&&n%4===0, star:n=>n>=8&&n%8===0,
   vline:n=>n>=1, hline:n=>n>=1, diag:n=>n>=1, v:n=>n>=2&&n%2===0,
@@ -847,30 +836,21 @@ function renderMap(plan){
   svg.innerHTML=o;
   const selected=plan.members[S.sel];
   svg.classList.toggle('placing',Boolean(selected));
-  const previews={small:[],detailed:[],military:[],symbol:[],building:[],letter:[],mini:[]};
-  for(const [id,rows] of Object.entries(PIXEL_PATTERNS)){
-    const tiles=[...rows.join('')];
-    const size=tiles.filter(tile=>tile!=='.').length;
-    const preview=tiles.map(tile=>{
-      const color={'.':'','X':'member','C':'leader'}[tile];
-      return `<span class="${color}"></span>`;
-    }).join('');
-    const letter=Object.hasOwn(LETTER_PATTERNS,id);
-    const name=letter?id.slice('glyph-'.length):L().pixelNames[id.replace(/\d+$/,'')];
-    const label=size===7?name:`${name}<small>${L().pixelSize(size)}</small>`;
-    const group=letter?'letter':Object.hasOwn(MILITARY_PATTERNS,id)?'military':Object.hasOwn(SYMBOL_PATTERNS,id)?'symbol':Object.hasOwn(BUILDING_PATTERNS,id)?'building':Object.hasOwn(MINI_PATTERNS,id)?'mini':size<=8?'small':'detailed';
-    const pixelSize=size>=56?4:5;
-    previews[group].push(`<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},${pixelSize}px);--preview-pixel:${pixelSize}px">${preview}</span><span>${label}</span></button>`);
-  }
-  $('smallPatterns').innerHTML=previews.small.join('');
-  $('detailedPatterns').innerHTML=previews.detailed.join('');
-  $('militaryPatterns').innerHTML=previews.military.join('');
-  $('symbolPatterns').innerHTML=previews.symbol.join('');
-  $('buildingPatterns').innerHTML=previews.building.join('');
-  $('letterPatterns').innerHTML=previews.letter.join('');
-  $('miniPatterns').innerHTML=previews.mini.join('');
   $('mapHint').textContent=selected?`${L().movePosition} · ${selected.name}`:free?L().hintFree:L().hintMap;
   $('placementActions').hidden=!selected;
+}
+
+function renderPixelPatterns(){
+  for(const [group,patterns] of Object.entries(PATTERN_GROUPS)){
+    $(group).innerHTML=Object.entries(patterns).map(([id,rows])=>{
+      const preview=[...rows.join('')].map(tile=>{
+        const color={'.':'','X':'member','C':'leader'}[tile];
+        return `<span class="${color}"></span>`;
+      }).join('');
+      const name=group==='letterPatterns'?id.slice('glyph-'.length):L().pixelNames[id.replace(/\d+$/,'')];
+      return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},5px)">${preview}</span><span>${name}</span></button>`;
+    }).join('');
+  }
 }
 
 /* ==== E-MANUEL-05 · FICHES COÉQUIPIERS ==== */
@@ -894,10 +874,6 @@ function renderControls(plan){
   ).join('');
   const fixed=FIXED.has(S.shape),cs=cur();
   chips($('shapes'),SHAPES.filter(x=>!FIXED.has(x.id)&&shapeOk(x.id,S.n)).map(x=>({id:x.id,label:l.shapes[x.id]})),cs,'shape');
-  const hearts=HEARTS.filter(id=>SQUAD_SIZES.includes(HCOUNT[id]));
-  $('heartGroup').hidden=!hearts.length;
-  chips($('heartShapes'),hearts.map(id=>({id,label:l.shapes[id]+' · '+HCOUNT[id]})),cs,'shape');
-  $('fixedInfo').hidden=!fixed;$('fixedInfo').textContent=fixed?l.fixedInfo(plan.members.length+1):'';
   $('shapesHint').hidden=free||fixed;
   chips($('refs'),REFS.map(x=>({id:x.id,label:l.refs[x.id]})),S.ref,'ref');
   $('refHint').textContent=S.ref==='leader'?l.refLeader:l.refNeighbor;
@@ -905,6 +881,7 @@ function renderControls(plan){
   $('edit').hidden=free;
   const k=plan.names.length,total=plan.members.length;
   $('n').value=String(total+1);
+  $('squadCount').textContent=l.squadCount(total);
   const fitSize=tierFor(k);
   $('nameInfo').innerHTML=(k?esc(l.nameInfo(k,total)):'')+(k&&fitSize!==total+1?' <button type="button" class="link" id="fitNames">'+esc(l.fit(fitSize-1))+'</button>':'');
 }
@@ -988,6 +965,7 @@ function init(){
       S.free.length=count;
     }
   };
+  renderPixelPatterns();
   const initialCount=baseCells().length;
   S.n=tierFor(initialCount)-1;
   if(initialCount!==S.n&&(S.shape==='free'||FIXED.has(S.shape))){
@@ -1021,10 +999,9 @@ function init(){
     if(!button)return;
     Object.assign(S,pixelSquad(button.dataset.pattern),{sel:-1});
     render();
-    $('pixelPatterns').querySelector(`[data-pattern="${button.dataset.pattern}"]`).focus();
   });
   $('n').addEventListener('change',e=>setSize(Number(e.target.value)));
-  ['shapes','heartShapes'].forEach(id=>$(id).addEventListener('click',e=>{
+  $('shapes').addEventListener('click',e=>{
     const button=e.target.closest('[data-shape]');
     if(!button||button.dataset.shape===S.shape)return;
     if(button.dataset.shape==='free')S.free=sortCells(baseCells());
@@ -1032,19 +1009,21 @@ function init(){
     S.n=baseCells().length;
     S.sel=-1;
     render();
-  }));
+  });
   $('refs').addEventListener('click',e=>{const b=e.target.closest('[data-ref]');if(!b)return;S.ref=b.dataset.ref;render();});
   $('langs').addEventListener('click',e=>{
     const b=e.target.closest('[data-lang]');
     if(!b)return;
     S.languageMode=b.dataset.lang;
     S.lang=S.languageMode==='auto'?detectLang():S.languageMode;
+    renderPixelPatterns();
     render();
     $('langs').querySelector('[aria-pressed="true"]').focus();
   });
   window.addEventListener('languagechange',()=>{
     if(S.languageMode!=='auto')return;
     S.lang=detectLang();
+    renderPixelPatterns();
     render();
   });
   $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames')setSize(tierFor(buildPlan().names.length));});

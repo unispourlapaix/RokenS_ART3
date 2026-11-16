@@ -9,18 +9,11 @@ The leader takes position first, then every teammate gets a simple direction ("1
 Langues / Languages : Français · English · 日本語 · Bahasa Indonesia. Le mode Auto suit les langues préférées du navigateur. Un choix manuel est mémorisé. / Auto follows the browser’s preferred languages. A manual choice is remembered.
 
 ## Fonctionnalités / Features
-- Flèche et cœur pour une équipe de 8, chef compris. La flèche est la formation de départ. / Arrow and heart for a squad of 8, leader included. The arrow is the default formation.
-- Grille libre avec 17 motifs kawaii de 7, 14 ou 28 cases, dont un ourson, une patte, un champignon et un onigiri. / Free grid with 17 kawaii patterns for squads of 7, 14, or 28, including a bear, a paw, a mushroom, and onigiri.
-- Formes automatiques (croix, X, étoile, bloc, carré, cercle, losange, V, triangle, lignes) proposées seulement si elles sont possibles avec le nombre de coéquipiers choisi
-- Dessin libre sur une grille, pivoter, miroir
-- Douze petits motifs supplémentaires de 7 cases, dont une couronne, un voilier et une note de musique. / Twelve additional seven-tile patterns, including a crown, a sailboat, and a music note.
-- Dix motifs de 14 ou 28 cases avec émoticônes, Pac-Man, cœurs, étoile à cinq branches et flèche. / Ten patterns for squads of 14 or 28, including emoticons, Pac-Man, hearts, a five-pointed star, and an arrow.
-- Alphabet A–Z et chiffre 3 sur 14 cases par caractère. / Letters A–Z and the digit 3 use 14 tiles per character.
-- Inscription ART3 en lettres pixel art sur 56 cases. / ART3 lettering in 56 tiles.
-- Épées médiévales, maisons et villes de 14 à 100 cases. / Medieval swords, houses, and city skylines for squads of 14 to 100.
-- Six motifs militaires déclinés en 14, 28 et 56 ou 100 cases : tronçonneuse, missile, char à canon, avion, grenade et hélicoptère. / Six military patterns with variants for squads of 14, 28, and 56 or 100: chainsaw, missile, tank, airplane, grenade, and helicopter.
-- Effectifs de 7, 8, 14, 28, 56 ou 100 personnes, chef compris, avec pseudos personnalisés
-- Plan à copier dans le chat d'alliance
+- Tous les motifs pixel art utilisent 8 cases (1 chef et 7 coéquipiers) : animaux, objets, émoticônes, cœurs, bâtiments, motifs militaires et caractères A–Z et 3. / All pixel art templates use 8 tiles (1 leader and 7 teammates), including animals, objects, emoticons, hearts, buildings, military patterns, and characters A–Z and 3.
+- La flèche est la formation de départ. Une formation enregistrée conserve son effectif. / The arrow is the default formation. Saved formations keep their squad size.
+- La grille libre reste réglable pour 7, 8, 14, 28, 56 ou 100 personnes, chef compris. / Custom squad sizes are 7, 8, 14, 28, 56, or 100, leader included.
+- Déplacement case par case, rotation, miroir et pseudos personnalisés. / Tile placement, rotation, mirroring, and custom names.
+- Plan à copier dans le chat d’alliance. / Placement instructions for alliance chat.
 
 ## Utilisation
 Ouvrir `index.html` dans un navigateur (aucun serveur, aucune installation), ou l'héberger avec GitHub Pages.
