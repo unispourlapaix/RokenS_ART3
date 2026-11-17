@@ -333,7 +333,7 @@ const SQUAD_SIZES=[7,8,14,28,56,100];
 const tierFor=count=>SQUAD_SIZES.find(size=>size>=count+1)??SQUAD_SIZES.at(-1);
 const STARTER_PATTERNS={
   arrow8:['..X..','.XXX.','..C..','..X..','..X..','..X..'],
-  heart8:['.X.X.','.XCX.','.X.X.','..X..'],
+  heart8:['.X.X.','X.C.X','.X.X.','..X..'],
 };
 const KAWAII_PATTERNS={
   cat:['X.X.','XCX.','.X.X','..X.'],
@@ -433,7 +433,10 @@ const PATTERN_GROUPS={
 };
 const PIXEL_PATTERNS=Object.assign({},...Object.values(PATTERN_GROUPS));
 const pixelSquad=(pattern='arrow8')=>{
-  const free=sortCells(parsePat(PIXEL_PATTERNS[pattern]));
+  const free=parsePat(PIXEL_PATTERNS[pattern]);
+  // Le cœur se trace depuis le chef en suivant le contour dans le sens horaire.
+  if(pattern==='heart8')free.sort((a,b)=>ang(a)-ang(b));
+  else sortCells(free);
   return {shape:'free',n:free.length,free,freeR:4};
 };
 
@@ -466,7 +469,7 @@ fr:{
   "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…).",
   "<b>Réglez le nombre de coéquipiers</b> et écrivez leurs pseudos (un par ligne, facultatif).",
   "<b>Lisez la carte</b> : chaque case numérotée est un coéquipier. Pour le déplacer, sélectionnez-le puis choisissez une case libre. Les traits pointillés montrent sur qui il se repère.",
-  "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↗2 veut dire 2 cases en diagonale. Les directions sont celles de l'écran du jeu.",
+  "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↑2 →1 signifie 2 cases vers le haut, puis 1 case à droite. Les directions sont celles de l'écran du jeu.",
   "<b>Envoyez le plan</b> : touchez « Copier le plan » et collez-le dans le chat d'alliance. Le chef se place d'abord, puis chacun dans l'ordre des numéros.",
   "<b>Envie de votre propre forme ?</b> Choisissez ✎ Libre (ou « Modifier cette forme »), puis touchez les cases de la grille. ↻ Pivoter et ⇋ Miroir tournent ou retournent n'importe quelle forme."
  ],funL:"Formes fun · 5 cases (chef + 4)",fixedInfo:t=>`Forme fixe : ${t} cases, le chef + ${t-1} coéquipiers. Pivotez-la ou retournez-la comme vous voulez.`,heartL:"Cœurs · taille fixe",shapesHint:"Seules les formes qui rentrent avec votre nombre de coéquipiers sont proposées. Essayez 4, 8, 12… pour en voir d'autres.",copy:"Copier le plan",
@@ -509,7 +512,7 @@ en:{
   "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…).",
   "<b>Set the number of teammates</b> and type their names (one per line, optional).",
   "<b>Read the map</b>: each numbered tile is a teammate. Select a teammate, then an empty tile to move them. Dotted lines show who they line up with.",
-  "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↗2 means 2 cells diagonally. Directions are the ones on the game screen.",
+  "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↑2 →1 means 2 cells up, then 1 cell right. Directions are the ones on the game screen.",
   "<b>Share the plan</b>: tap “Copy plan” and paste it in the alliance chat. The leader goes first, then everyone in number order.",
   "<b>Want your own shape?</b> Pick ✎ Free (or “Edit this shape”), then tap cells on the grid. ↻ Rotate and ⇋ Mirror turn or flip any shape."
  ],funL:"Fun shapes · 5 cells (leader + 4)",fixedInfo:t=>`Fixed shape: ${t} cells, the leader + ${t-1} teammates. Rotate or flip it as you like.`,heartL:"Hearts · fixed size",shapesHint:"Only shapes that fit your number of teammates are shown. Try 4, 8, 12… to see more.",copy:"Copy plan",
@@ -539,8 +542,7 @@ en:{
   if(!dx)return `${c(ay)} ${dy<0?'above':'below'} ${ref}`;
   if(!dy)return `${c(ax)} to the ${dx<0?'left':'right'} of ${ref}`;
   const v=dy<0?'up':'down',h=dx<0?'left':'right';
-  if(ax===ay)return `${c(ax)} diagonally ${v}-${h} of ${ref}`;
-  return `${c(ay)} ${v}, ${c(ax)} ${h} of ${ref}`;
+  return `From ${ref}, ${c(ay)} ${v}, then ${c(ax)} ${h}`;
  }
 },
 ja:{
@@ -560,7 +562,7 @@ ja:{
   "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。",
   "<b>メンバー数を設定</b>し、名前を入力します（1行に1人、任意）。",
   "<b>マップを見る</b>：番号つきのマスが各メンバーです。移動するにはメンバーを選んでから空きマスを選びます。点線は、その人が基準にする相手を示します。",
-  "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↗2 は斜めに2マスという意味です。方向はゲーム画面で見えるとおりです。",
+  "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↑2 →1 は上に2マス、次に右に1マス進むという意味です。方向はゲーム画面で見えるとおりです。",
   "<b>プランを共有</b>：「プランをコピー」を押して同盟チャットに貼り付けます。リーダーが先、その後は番号順です。",
   "<b>自分だけの形を作りたい？</b> ✎ 自由（または「この形を編集」）を選び、グリッドのマスをタップします。↻ 回転と ⇋ 反転で、どの形も向きを変えられます。"
  ],funL:"おもしろ図形 · 5マス（リーダー＋4人）",fixedInfo:t=>`固定の形：${t}マス（リーダー＋メンバー${t-1}人）。回転・反転できます。`,heartL:"ハート · サイズ固定",shapesHint:"メンバー数に合う形だけを表示しています。4、8、12…人にすると他の形も出ます。",copy:"プランをコピー",
@@ -590,8 +592,7 @@ ja:{
   if(!dx)return `${ref}の${ay}マス${dy<0?'上':'下'}`;
   if(!dy)return `${ref}の${ax}マス${dx<0?'左':'右'}`;
   const v=dy<0?'上':'下',h=dx<0?'左':'右';
-  if(ax===ay)return `${ref}から${h}${v}に${ax}マス`;
-  return `${ref}から${v}に${ay}マス、${h}に${ax}マス`;
+  return `${ref}から${v}に${ay}マス進み、次に${h}に${ax}マス`;
  }
 },
 id:{
@@ -611,7 +612,7 @@ id:{
   "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…).",
   "<b>Atur jumlah anggota</b> dan tulis nama mereka (satu per baris, opsional).",
   "<b>Baca peta</b>: setiap petak bernomor adalah satu anggota. Pilih anggota, lalu pilih petak kosong untuk memindahkannya. Garis putus-putus menunjukkan patokan mereka.",
-  "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↗2 berarti 2 kotak secara diagonal. Arah sesuai layar game.",
+  "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↑2 →1 berarti 2 kotak ke atas, lalu 1 kotak ke kanan. Arah sesuai layar game.",
   "<b>Bagikan rencana</b>: ketuk “Salin rencana” lalu tempel di chat aliansi. Pemimpin lebih dulu, lalu semua sesuai nomor.",
   "<b>Mau bentuk sendiri?</b> Pilih ✎ Bebas (atau “Ubah bentuk ini”), lalu ketuk kotak di grid. ↻ Putar dan ⇋ Cermin memutar atau membalik bentuk apa pun."
  ],funL:"Bentuk seru · 5 kotak (pemimpin + 4)",fixedInfo:t=>`Bentuk tetap: ${t} kotak, pemimpin + ${t-1} anggota. Putar atau balik sesuka hati.`,heartL:"Hati · ukuran tetap",shapesHint:"Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan. Coba 4, 8, 12… untuk melihat lainnya.",copy:"Salin rencana",
@@ -641,8 +642,7 @@ id:{
   if(!dx)return `${c(ay)} ${dy<0?'di atas':'di bawah'} ${ref}`;
   if(!dy)return `${c(ax)} di sebelah ${dx<0?'kiri':'kanan'} ${ref}`;
   const v=dy<0?'atas':'bawah',h=dx<0?'kiri':'kanan';
-  if(ax===ay)return `${c(ax)} diagonal ${h}-${v} dari ${ref}`;
-  return `${c(ay)} ke ${v}, ${c(ax)} ke ${h} dari ${ref}`;
+  return `Dari ${ref}, ${c(ay)} ke ${v}, lalu ${c(ax)} ke ${h}`;
  }
 }
 };
@@ -721,14 +721,12 @@ function describe(dx,dy,ref){
   if(!dx)return `${cases(ay)} ${dy<0?'au-dessus de':'en dessous de'} ${ref}`;
   if(!dy)return `${cases(ax)} à ${dx<0?'gauche':'droite'} de ${ref}`;
   const v=dy<0?'haut':'bas',h=dx<0?'gauche':'droite';
-  if(ax===ay)return `${cases(ax)} en diagonale ${v}-${h} de ${ref}`;
-  return `${cases(ay)} en ${v}, ${cases(ax)} à ${h} de ${ref}`;
+  return `Depuis ${ref}, ${cases(ay)} en ${v}, puis ${cases(ax)} à ${h}`;
 }
 function signal(dx,dy){
   const ax=Math.abs(dx),ay=Math.abs(dy),A=dx<0?'←':'→',V=dy<0?'↑':'↓';
   if(!dx)return V+ay;
   if(!dy)return A+ax;
-  if(ax===ay)return (dy<0?(dx<0?'↖':'↗'):(dx<0?'↙':'↘'))+ax;
   return V+ay+' '+A+ax;
 }
 function pickRef(placed,x,y){
