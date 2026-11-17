@@ -166,7 +166,8 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
 .pixel-preview{display:grid;gap:1px;padding:3px;background:var(--map-bed)}
 .pixel-library{margin:0 0 12px}
 .pixel-library .pixel-patterns{margin:6px 0 0}
-.pixel-preview span{width:5px;height:5px;background:var(--map-tile)}
+.pattern-size{font-size:14px;color:var(--muted);margin:12px 0 0}
+.pixel-preview span{width:var(--pattern-pixel,5px);height:var(--pattern-pixel,5px);background:var(--map-tile)}
 .pixel-preview .member{background:#c5774d}
 .pixel-preview .leader{background:#ffdb8e}
 </style>
@@ -249,8 +250,27 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
       <section class="panel" id="E-MANUEL-11-carte">
         <h2 data-t="mapH">La forme sur la carte</h2>
         <div id="pixelPatterns" role="group" data-ta="pixelPatterns">
-          <p class="hint" data-t="pixelPatterns">Motifs pixel art de 8 points</p>
+          <p class="hint" data-t="compactPatterns">Motifs pixel art de 8 points</p>
           <div class="pixel-patterns" id="smallPatterns"></div>
+          <details class="pixel-library">
+            <summary data-t="largePatternLibrary">Grandes formations détaillées</summary>
+            <section aria-labelledby="patternsHeading14">
+              <h3 class="pattern-size" id="patternsHeading14" data-pattern-size="14">14 cases</h3>
+              <div class="pixel-patterns" id="patterns14"></div>
+            </section>
+            <section aria-labelledby="patternsHeading28">
+              <h3 class="pattern-size" id="patternsHeading28" data-pattern-size="28">28 cases</h3>
+              <div class="pixel-patterns" id="patterns28"></div>
+            </section>
+            <section aria-labelledby="patternsHeading56">
+              <h3 class="pattern-size" id="patternsHeading56" data-pattern-size="56">56 cases</h3>
+              <div class="pixel-patterns" id="patterns56"></div>
+            </section>
+            <section aria-labelledby="patternsHeading100">
+              <h3 class="pattern-size" id="patternsHeading100" data-pattern-size="100">100 cases</h3>
+              <div class="pixel-patterns" id="patterns100"></div>
+            </section>
+          </details>
           <details class="pixel-library">
             <summary data-t="miniPatterns">Objets et petits symboles</summary>
             <div class="pixel-patterns" id="miniPatterns"></div>
@@ -422,6 +442,63 @@ const LETTER_PATTERNS={
   'glyph-Z':['XXX','..X','.C.','X..','XX.'],
   'glyph-3':['XXX','..X','.C.','..X','XX.']
 };
+const PATTERNS_14={
+  'mushroom-14':['.XXX.','XXXXX','.XCX.','.XXX.'],
+  'ghost-14':['.XXX.','XX.XX','XXCXX','X...X'],
+  'chick-14':['..XX.','.XXXX','.XCX.','XXXXX'],
+  'frog-14':['X...X','XXXXX','X.C.X','XX.XX'],
+  'flower-14':['.XXX.','XXCXX','.XXX.','..X..','.X.X.'],
+  'onigiri-14':['...X...','..XXX..','.XXCXX.','.XXXXX.'],
+  'strawberry-14':['.X.X.','XXXXX','.XCX.','.XXX.','..X..'],
+  'fish-14':['..XXX..','XXXCXX.','.XXXX..','..X....'],
+  'smile-14':['..X...X..','.XX...XX.','.........','.X..C..X.','..XXXXX..'],
+  'wink-14':['XX...XXX','........','X..C...X','.XXXXXX.'],
+  'pacman-14':['.XXX..','XXXX..','XC....','XX....','.XXX..'],
+  'heartOutline-14':['.XX.XX.','X..C..X','X.....X','.X...X.','..X.X..','...X...'],
+  'arrow-14':['...X...','..XXX..','.XXXXX.','..XCX..','...X...','...X...'],
+  'medievalSword-14':['..X..','.XXX.','.XXX.','XXCXX','..X..','..X..'],
+  'house-14':['..X..','.XXX.','XXXXX','X.C.X','X...X'],
+  'chainsaw-14':['.XXX....','X...X...','XXCXXXXX','...X....'],
+  'missile-14':['..X..','.XXX.','.XCX.','XXXXX','X...X'],
+  'tank-14':['.XXX...','.XCXXXX','XXXXX..'],
+  'plane-14':['...X...','..XXX..','XXXCXXX','...X...','..X.X..'],
+  'grenade-14':['...XX','..XXX','.XCX.','XXXX.','.XX..'],
+  'helicopter-14':['..XXXXX','....X..','.XXCXX.','..XXX..']
+};
+const PATTERNS_28={
+  'catFace-28':['XX...XX','XXX.XXX','XXXXXXX','XX.C.XX','.XXXXX.','...X...'],
+  'penguin-28':['..XXX..','.XXXXX.','XX.X.XX','XXXCXXX','.XXXXX.','.X.X.X.'],
+  'octopus-28':['.XXXX.','XXXXXX','X.XX.X','XXCXXX','XXXXXX','X....X'],
+  'bearFace-28':['XX...XX','.XXXXX.','XXXXXXX','XX.C.XX','.XXXXX.','..X.X..'],
+  'heartEyes-28':['XX.XX...XX.XX','XXXXX...XXXXX','.XXX.....XXX.','......C......','.....XXX.....'],
+  'pacman-28':['..XXXX..','.XXXXXX.','XXXCXX..','XXX.....','.XXXX...','..XXXXX.'],
+  'heartFull-28':['..X..X..','XXX..XXX','XXXCXXXX','.XXXXXX.','..XXXX..','...XX...'],
+  'doubleHeart-28':['.XX.XX...XX.XX.','X..C..X.X..X..X','X.....X.X.....X','.X...X...X...X.','..X.X.....X.X..','...X.......X...'],
+  'fivePointStar-28':['....X....','....X....','...XXX...','...XXX...','XXXXXXXXX','..XXCXX..','..XX.XX..','..X...X..'],
+  'crossedSwords-28':['XX.....XX','.XX...XX.','..XX.XX..','...XCX...','...XXX...','..XX.XX..','.XX...XX.','.X.....X.'],
+  'house-28':['...X...','..XXX..','.XXXXX.','XXXXXXX','.XXCXX.','.X.X.X.','.XX.XX.'],
+  'chainsaw-28':['..XXX.....','.XX.XX....','XXXCXXXXXX','XXXXXXXX..','..X...X.X.'],
+  'missile-28':['...X...','..XXX..','..XXX..','.XXXXX.','.XXCXX.','.XXXXX.','XX...XX','X.....X'],
+  'tank-28':['..XXXX....','.XXCXXXXXX','XXXXXXX...','XX...XX...','.XXXX.....'],
+  'plane-28':['....X....','...XXX...','..XXXXX..','XXXXCXXXX','....X....','...XXX...','.XXX.XXX.'],
+  'grenade-28':['....XXX','...XX.X','..XXXXX','.XXXXX.','.XXCXX.','.XXXXX.','..X.X..'],
+  'helicopter-28':['..XXXXXXX.','.....X....','...XXXXX..','.XXXXCXXXX','..XXXX....','...X..X...']
+};
+const PATTERNS_56={
+  'artWord-56':['.XX..XXX..XXXX.XXXX','X..X.X..X..XX.....X','X..X.XXX...XX...XX.','XXXX.X.C...XX.....X','X..X.X..X..XX..X..X','X..X.X..X..XX..XXXX'],
+  'cityscape-56':['.......X.......','......XXX......','.XXX.XXXXX.....','.X.X.X.X.X.XXX.','.XXX.XXXXX.X.X.','.XXX.XXXXX.XXX.','XXXXXXXCXXXXXXX'],
+  'chainsaw-56':['..XXXX..........','.XX..XX.........','.XXXXXX..X.X.X.X','XXXXCXXXXXXXXXX.','XXXXXXXXXXXXXXXX','.XXXXX...X...X..'],
+  'missile-56':['.....X....','....XXX...','....XXX...','...XXXXX..','...XXXXX..','...XXCXX..','...XXXXX..','...XXXXX..','..XXXXXXX.','.XXXXXXXXX','.XX..X..XX','.....X....','....X.X...'],
+  'plane-56':['.......X.......','......XXX......','......XXX......','......XXX......','.....XXXXX.....','...XXXXXXXXX...','XXXXXXXCXXXXXXX','.......X.......','......XXX......','....XXXXXXX....','....XXX.XXX....'],
+  'grenade-56':['......XX..','.....XX.XX','....XXXXXX','...XXXX...','..XXXXXX..','.XXXXXXXX.','.XXXCXXXX.','.XXXXXXXX.','..XXXXXX..','...XXXX...'],
+  'helicopter-56':['.....XXXXXXXXXX...','..........X.......','.......XXXX....XX.','....XXXXXXXXXXXXXX','...XXXXXXCXXXX....','....XXXXXX........','......X..X........','.....XXXXXX.......'],
+  'heartFull-56':['.XX..XX.','XXXXXXXX','XXXXXXXX','XXXCXXXX','XXXXXXXX','XXXXXXXX','.XXXXXX.','..XXXX..','...XX...']
+};
+const PATTERNS_100={
+  'cityscape-100':['.......X...........','.XX...XXX....X.....','XXXX.XXXXX.XXXX....','X.XX.XX.XX.XXXX.XXX','XXXX.XXXXX.XXXX.XXX','XX.X.XXXXX.XXXX.XXX','XXXX.XXXXX.XXXX.XXX','XXXXXXXXXCXXXXXXXXX'],
+  'tank-100':['......XXXXXX............','....XXXXXXXXXX......XXXX','....XXXXXCXXXXXXXXXXXXXX','..XXXXXXXXXXXX..........','XXXXXXXXXXXXXXXXXXX.....','XX.XX.XX.XX.XX.XX.XX....','.XXXXXXXXXXXXXXX........'],
+  'heartFull-100':['..XX....XX..','.XXXX..XXXX.','XXXXXXXXXXXX','XXXXXXXXXXXX','XXXXXCXXXXXX','XXXXXXXXXXXX','.XXXXXXXXXX.','.XXXXXXXXXX.','..XXXXXXXX..','...XXXXXX...','....XXXX....','.....XX.....']
+};
 const PATTERN_GROUPS={
   smallPatterns:STARTER_PATTERNS,
   miniPatterns:MINI_PATTERNS,
@@ -430,6 +507,10 @@ const PATTERN_GROUPS={
   letterPatterns:LETTER_PATTERNS,
   buildingPatterns:BUILDING_PATTERNS,
   militaryPatterns:MILITARY_PATTERNS,
+  patterns14:PATTERNS_14,
+  patterns28:PATTERNS_28,
+  patterns56:PATTERNS_56,
+  patterns100:PATTERNS_100,
 };
 const PIXEL_PATTERNS=Object.assign({},...Object.values(PATTERN_GROUPS));
 const pixelSquad=(pattern='arrow8')=>{
@@ -453,7 +534,7 @@ function detectLang(){
 }
 const I18N={
 fr:{
- pixelPatterns:"Motifs pixel art de 8 points",morePatterns:"Animaux et motifs kawaii",militaryPatterns:"Motifs militaires",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet",miniPatterns:"Objets et petits symboles",pixelNames:{"cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},
+ pixelPatterns:"Motifs pixel art",compactPatterns:"Motifs pixel art de 8 points",largePatternLibrary:"Grandes formations détaillées",patternSize:n=>`${n} cases`,morePatterns:"Animaux et motifs kawaii",militaryPatterns:"Motifs militaires",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet",miniPatterns:"Objets et petits symboles",pixelNames:{"artWord":"ART3", "cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},
  squadOfEight:"Créer une flèche de 8",squadCount:n=>`1 chef et ${n} coéquipiers`,
  languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
@@ -496,7 +577,7 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
- pixelPatterns:"Eight-point pixel art patterns",morePatterns:"Animals and kawaii patterns",militaryPatterns:"Military patterns",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet",miniPatterns:"Objects and small symbols",pixelNames:{"cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},
+ pixelPatterns:"Pixel art patterns",compactPatterns:"Eight-point pixel art patterns",largePatternLibrary:"Detailed large formations",patternSize:n=>`${n} tiles`,morePatterns:"Animals and kawaii patterns",militaryPatterns:"Military patterns",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet",miniPatterns:"Objects and small symbols",pixelNames:{"artWord":"ART3", "cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},
  squadOfEight:"Create an 8-person arrow",squadCount:n=>`1 leader and ${n} teammates`,
  languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
@@ -546,7 +627,7 @@ en:{
  }
 },
 ja:{
- pixelPatterns:"8マスのドット絵",morePatterns:"動物とかわいいドット絵",militaryPatterns:"ミリタリーのドット絵",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット",miniPatterns:"小物と記号",pixelNames:{"cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},
+ pixelPatterns:"ドット絵",compactPatterns:"8マスのドット絵",largePatternLibrary:"大人数向けの細かいドット絵",patternSize:n=>`${n}マス`,morePatterns:"動物とかわいいドット絵",militaryPatterns:"ミリタリーのドット絵",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット",miniPatterns:"小物と記号",pixelNames:{"artWord":"ART3", "cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},
  squadOfEight:"8人で矢印を作る",squadCount:n=>`リーダー1人とメンバー${n}人`,
  languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
@@ -596,7 +677,7 @@ ja:{
  }
 },
 id:{
- pixelPatterns:"Pola seni piksel 8 petak",morePatterns:"Hewan dan pola kawaii",militaryPatterns:"Pola militer",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet",miniPatterns:"Benda dan simbol kecil",pixelNames:{"cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},
+ pixelPatterns:"Pola seni piksel",compactPatterns:"Pola seni piksel 8 petak",largePatternLibrary:"Formasi besar dengan detail",patternSize:n=>`${n} petak`,morePatterns:"Hewan dan pola kawaii",militaryPatterns:"Pola militer",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet",miniPatterns:"Benda dan simbol kecil",pixelNames:{"artWord":"ART3", "cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},
  squadOfEight:"Buat formasi panah 8 orang",squadCount:n=>`1 pemimpin dan ${n} anggota`,
  languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
@@ -839,14 +920,17 @@ function renderMap(plan){
 }
 
 function renderPixelPatterns(){
+  document.querySelectorAll('[data-pattern-size]').forEach(heading=>{
+    heading.textContent=L().patternSize(heading.dataset.patternSize);
+  });
   for(const [group,patterns] of Object.entries(PATTERN_GROUPS)){
     $(group).innerHTML=Object.entries(patterns).map(([id,rows])=>{
       const preview=[...rows.join('')].map(tile=>{
         const color={'.':'','X':'member','C':'leader'}[tile];
         return `<span class="${color}"></span>`;
       }).join('');
-      const name=group==='letterPatterns'?id.slice('glyph-'.length):L().pixelNames[id.replace(/\d+$/,'')];
-      return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},5px)">${preview}</span><span>${name}</span></button>`;
+      const name=group==='letterPatterns'?id.slice('glyph-'.length):L().pixelNames[id.replace(/-?\d+$/,'')];
+      return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},var(--pattern-pixel));--pattern-pixel:${rows[0].length>16?4:5}px">${preview}</span><span>${name}</span></button>`;
     }).join('');
   }
 }

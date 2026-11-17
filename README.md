@@ -9,7 +9,8 @@ The leader takes position first, then every teammate gets a simple direction ("1
 Langues / Languages : Français · English · 日本語 · Bahasa Indonesia. Le mode Auto suit les langues préférées du navigateur. Un choix manuel est mémorisé. / Auto follows the browser’s preferred languages. A manual choice is remembered.
 
 ## Fonctionnalités / Features
-- Tous les motifs pixel art utilisent 8 cases (1 chef et 7 coéquipiers) : animaux, objets, émoticônes, cœurs, bâtiments, motifs militaires et caractères A–Z et 3. / All pixel art templates use 8 tiles (1 leader and 7 teammates), including animals, objects, emoticons, hearts, buildings, military patterns, and characters A–Z and 3.
+- Les motifs pixel art compacts utilisent 8 cases (1 chef et 7 coéquipiers) : animaux, objets, émoticônes, cœurs, bâtiments, motifs militaires et caractères A–Z et 3. / Compact pixel art templates use 8 tiles (1 leader and 7 teammates), including animals, objects, emoticons, hearts, buildings, military patterns, and characters A–Z and 3.
+- Grandes formations détaillées de 14, 28, 56 et 100 cases, chef compris. / Detailed formations for 14, 28, 56, and 100, leader included.
 - La flèche est la formation de départ. Une formation enregistrée conserve son effectif. / The arrow is the default formation. Saved formations keep their squad size.
 - La grille libre reste réglable pour 7, 8, 14, 28, 56 ou 100 personnes, chef compris. / Custom squad sizes are 7, 8, 14, 28, 56, or 100, leader included.
 - Déplacement case par case, rotation, miroir et pseudos personnalisés. / Tile placement, rotation, mirroring, and custom names.
