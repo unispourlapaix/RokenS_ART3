@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Formations d'escadron · Last War — RokenS ART3</title>
-<meta name="description" content="Squad formation planner for Last War: the leader takes the center, every teammate gets simple directions. FR · EN · 日本語 · ID">
+<meta name="description" content="Squad formation planner for Last War: the starting teammate takes the center, every teammate gets simple directions. FR · EN · 日本語 · ID">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Squad formations · Last War — RokenS ART3">
 <meta property="og:description" content="Build a squad around a leader and give every teammate their position simply. FR · EN · 日本語 · ID">
@@ -52,7 +52,6 @@ input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--
 textarea{resize:vertical}
 :focus-visible{outline:3px solid var(--sel);outline-offset:2px}
 .row{display:flex;gap:8px;align-items:center}
-.row .rank{width:76px;flex:none}
 .wrapbtn{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
 /* ==== E-MANUEL-22 · BOUTONS & PASTILLES ==== */
@@ -176,7 +175,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
 <div class="wrap">
   <header id="E-MANUEL-00-entete">
     <h1 data-t="title">Formations d'escadron</h1>
-    <p class="sub" data-t="sub">Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.</p>
+    <p class="sub" data-t="sub">Last War · RokenS ART3 — une équipe, des pixels et des formes à dessiner ensemble !</p>
     <div class="chips lang" id="langs" role="group" data-ta="languageLabel" aria-label="Langue / Language"></div>
   </header>
 
@@ -188,18 +187,17 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
   <section class="panel help" id="viewHelp" role="tabpanel" aria-labelledby="tabHelp" hidden>
     <p class="lead" data-t="helpLead"></p>
     <ol id="helpList"></ol>
-    <button type="button" class="btn primary" id="goMake" data-t="goMake">Créer mon escadron</button>
+    <button type="button" class="btn primary" id="goMake" data-t="goMake">Créer notre formation</button>
   </section>
 
   <div class="layout" id="viewMake" role="tabpanel" aria-labelledby="tabMake">
     <!-- ==== E-MANUEL-10 · RÉGLAGES ==== -->
     <div class="left">
       <section class="panel" id="E-MANUEL-10-reglages">
-        <h2 data-t="setup">Votre escadron</h2>
-        <span class="lbl" data-t="leaderL">Chef d'escadron et grade</span>
+        <h2 data-t="setup">Votre équipe</h2>
+        <span class="lbl" data-t="leaderL">Coéquipier au point de départ</span>
         <div class="row">
-          <input id="leader" placeholder="Pseudo du chef" data-tp="leaderPh" data-ta="leaderPh" maxlength="40" autocomplete="off">
-          <input id="rank" class="rank" placeholder="R4" data-ta="rankLabel" maxlength="6" autocomplete="off">
+          <input id="leader" placeholder="Pseudo du coéquipier de départ" data-tp="leaderPh" data-ta="leaderPh" maxlength="40" autocomplete="off">
         </div>
 
         <div class="wrapbtn">
@@ -209,7 +207,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         <span class="lbl" data-t="shapeL">Forme à dessiner</span>
         <div class="chips" id="shapes"></div>
         <p class="hint" id="shapesHint" data-t="shapesHint"></p>
-        <label class="lbl" for="n" data-t="nL">Effectif total (chef compris)</label>
+        <label class="lbl" for="n" data-t="nL">Nombre de coéquipiers</label>
         <select id="n" aria-describedby="squadCount">
           <option value="8" selected>8</option>
           <option value="7">7</option>
@@ -218,7 +216,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
           <option value="56">56</option>
           <option value="100">100</option>
         </select>
-        <p class="hint" id="squadCount">1 chef et 7 coéquipiers</p>
+        <p class="hint" id="squadCount">8 coéquipiers prêts à jouer</p>
 
         <div id="freeTools" hidden>
           <span class="lbl" data-t="freeL">Dessin libre</span>
@@ -309,7 +307,7 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
           <h2 id="planTitle" style="margin:0">Signalétique</h2>
           <button class="btn primary" id="copy" type="button" data-t="copy">Copier le plan</button>
         </div>
-        <p class="hint" style="margin:0 0 10px" data-t="planHint">Les directions sont celles que vous voyez sur l'écran du jeu. Le chef se place en premier, puis chacun dans l'ordre des numéros.</p>
+        <p class="hint" style="margin:0 0 10px" data-t="planHint">Les directions sont celles que vous voyez sur l'écran du jeu. Le coéquipier de départ se place en premier, puis chacun dans l'ordre des numéros.</p>
         <div id="cards"></div>
         <details id="planBox">
           <summary data-t="planBox">Voir le texte à coller dans le chat d'alliance</summary>
@@ -344,10 +342,10 @@ const SHAPES=[
   {id:'h_mini',label:'Mini cœur'},{id:'h_line',label:'Cœur contour'},{id:'h_fill',label:'Cœur plein'},
   {id:'h_big',label:'Grand cœur plein'},{id:'h_bigline',label:'Grand cœur contour'}
 ];
-const FUN=new Set(['f_t','f_u','f_w','f_z','f_p','f_l','f_v','f_y','f_n','f_f']); // formes fixes : 5 cases = chef + 4
+const FUN=new Set(['f_t','f_u','f_w','f_z','f_p','f_l','f_v','f_y','f_n','f_f']); // formes fixes : 5 cases = équipe de 5
 const HEARTS=['h_mini','h_line','h_fill','h_big','h_bigline'];   // cœurs dessinés à la main, taille fixe
 const FIXED=new Set([...FUN,...HEARTS]);
-const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le chef'}];
+const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le point de départ'}];
 const KEY='rokens-arte-last-war-v1';
 const SQUAD_SIZES=[7,8,14,28,56,100];
 const tierFor=count=>SQUAD_SIZES.find(size=>size>=count+1)??SQUAD_SIZES.at(-1);
@@ -535,88 +533,88 @@ function detectLang(){
 const I18N={
 fr:{
  pixelPatterns:"Motifs pixel art",compactPatterns:"Motifs pixel art de 8 points",largePatternLibrary:"Grandes formations détaillées",patternSize:n=>`${n} cases`,morePatterns:"Animaux et motifs kawaii",militaryPatterns:"Motifs militaires",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet",miniPatterns:"Objets et petits symboles",pixelNames:{"artWord":"ART3", "cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},
- squadOfEight:"Créer une flèche de 8",squadCount:n=>`1 chef et ${n} coéquipiers`,
- languageLabel:"Langue",autoLanguage:"Auto",rankLabel:"Grade du chef",namesPh:"Alpha\nBravo\nCharlie",
+ squadOfEight:"Créer une flèche de 8",squadCount:n=>`${n+1} coéquipiers prêts à jouer`,
+ languageLabel:"Langue",autoLanguage:"Auto",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formations d'escadron · Last War — RokenS ART3",
  title:"Formations d'escadron",
- sub:"Last War · RokenS ART3 — le chef se place, chaque coéquipier reçoit sa signalétique.",
- setup:"Votre escadron",leaderL:"Chef d'escadron et grade",leaderPh:"Pseudo du chef",
- shapeL:"Forme à dessiner",nL:"Effectif total (chef compris)",
+ sub:"Last War · RokenS ART3 — une équipe, des pixels et des formes à dessiner ensemble !",
+ setup:"Votre équipe",leaderL:"Coéquipier au point de départ",leaderPh:"Pseudo du coéquipier de départ",
+ shapeL:"Forme à dessiner",nL:"Nombre de coéquipiers",
  freeL:"Dessin libre",gMinus:"Grille −",gPlus:"Grille +",
  namesL:"Pseudos des coéquipiers (un par ligne, facultatif)",refL:"Comment chacun se repère ?",
  rot:"↻ Pivoter",mir:"⇋ Miroir",edit:"✎ Modifier cette forme",reset:"Réinitialiser",
- mapH:"La forme sur la carte",tabMake:"Créer",tabHelp:"Comment ça marche ?",goMake:"Créer mon escadron",helpLead:"Créez un escadron mené par un chef d'escadron et formez un groupe de coéquipiers rattachés à lui, à qui vous donnerez simplement leur position.",help:[
-  "<b>Choisissez votre chef</b> (pseudo + grade) : il se place en premier, sur la case ★ au centre.",
+ mapH:"La forme sur la carte",tabMake:"Créer",tabHelp:"Comment ça marche ?",goMake:"Créer notre formation",helpLead:"Choisissez une forme et amusez-vous à la dessiner en équipe ! Un coéquipier prend la case ★, puis les autres le rejoignent grâce aux consignes.",help:[
+  "<b>Choisissez le coéquipier de départ</b> (pseudo) : il se place en premier, sur la case ★ au centre.",
   "<b>Choisissez une forme</b> : croix, cercle, cœur… Seules les formes qui marchent avec votre nombre de coéquipiers sont affichées (essayez 4, 8, 12…).",
   "<b>Réglez le nombre de coéquipiers</b> et écrivez leurs pseudos (un par ligne, facultatif).",
   "<b>Lisez la carte</b> : chaque case numérotée est un coéquipier. Pour le déplacer, sélectionnez-le puis choisissez une case libre. Les traits pointillés montrent sur qui il se repère.",
   "<b>Lisez les fiches</b> : par exemple « 1 case au-dessus de RokenS » avec la flèche ↑1. ↑2 →1 signifie 2 cases vers le haut, puis 1 case à droite. Les directions sont celles de l'écran du jeu.",
-  "<b>Envoyez le plan</b> : touchez « Copier le plan » et collez-le dans le chat d'alliance. Le chef se place d'abord, puis chacun dans l'ordre des numéros.",
+  "<b>Envoyez le plan</b> : touchez « Copier le plan » et collez-le dans le chat d'alliance. Le coéquipier de départ se place d'abord, puis chacun dans l'ordre des numéros.",
   "<b>Envie de votre propre forme ?</b> Choisissez ✎ Libre (ou « Modifier cette forme »), puis touchez les cases de la grille. ↻ Pivoter et ⇋ Miroir tournent ou retournent n'importe quelle forme."
- ],funL:"Formes fun · 5 cases (chef + 4)",fixedInfo:t=>`Forme fixe : ${t} cases, le chef + ${t-1} coéquipiers. Pivotez-la ou retournez-la comme vous voulez.`,heartL:"Cœurs · taille fixe",shapesHint:"Seules les formes qui rentrent avec votre nombre de coéquipiers sont proposées. Essayez 4, 8, 12… pour en voir d'autres.",copy:"Copier le plan",
- planHint:"Les directions sont celles que vous voyez sur l'écran du jeu. Le chef se place en premier, puis chacun dans l'ordre des numéros.",
+ ],funL:"Formes fun · 5 cases (équipe de 5)",fixedInfo:t=>`Forme fixe : ${t} cases, ${t} coéquipiers. Pivotez-la ou retournez-la comme vous voulez.`,heartL:"Cœurs · taille fixe",shapesHint:"Seules les formes qui rentrent avec votre nombre de coéquipiers sont proposées. Essayez 4, 8, 12… pour en voir d'autres.",copy:"Copier le plan",
+ planHint:"Les directions sont celles que vous voyez sur l'écran du jeu. Le coéquipier de départ se place en premier, puis chacun dans l'ordre des numéros.",
  planBox:"Voir le texte à coller dans le chat d'alliance",
  hintFree:"Sélectionnez un coéquipier, puis une case libre pour le déplacer.",
  hintMap:"Sélectionnez un coéquipier sur la carte ou dans la liste pour le déplacer.",
  movePosition:"Choisissez une case libre pour déplacer",
  cancelPosition:"Annuler",
- refNeighbor:"Le premier coéquipier se repère sur le chef, puis chacun sur le coéquipier déjà placé le plus proche.",
- refLeader:"Tout le monde se repère uniquement sur le chef.",
- chefIns:"Se place en premier, au centre de la forme.",
+ refNeighbor:"Le premier coéquipier se repère sur le coéquipier de départ, puis chacun sur le coéquipier déjà placé le plus proche.",
+ refLeader:"Tout le monde se repère uniquement sur le coéquipier de départ.",
+ chefIns:"À toi de lancer la forme sur la case ★ !",
  none:"Aucun coéquipier pour l'instant : ajoutez des cases sur la carte.",
  toastOk:"Plan copié ✔",toastManual:"Sélectionnez le texte et copiez-le",
- chef:"Chef",defName:i=>"Coéquipier "+i,
+ chef:"Coéquipier de départ",defName:i=>"Coéquipier "+i,
  planH:n=>`Signalétique · ${n} coéquipier${n>1?'s':''}`,
  nameInfo:(k,t)=>`${k} pseudo${k>1?'s':''} pour ${t} place${t>1?'s':''}.`+(k>t?` ${k-t} en trop.`:'')+(k<t?" Les autres s'appellent « Coéquipier N ».":''),
  fit:k=>"Ajuster à "+k,
- planHead:(s,name,rank,n)=>`🎖️ Formation ${s} — ${name} (${rank}) + ${n} coéquipiers`,
+ planHead:(s,name,n)=>`🎉 Formation ${s} — ${name} + ${n} coéquipiers`,
  planFirst:name=>`1. ${name} se place en premier (centre)`,
- planFoot:"(directions vues sur l'écran du jeu · RokenS ART3)",rankFallback:"chef",
+ planFoot:"(directions vues sur l'écran du jeu · RokenS ART3)",
  shapes:{cross:'Croix +',x:'Croix X',star:'Étoile',block:'Bloc',square:'Carré vide',circle:'Cercle',diamond:'Losange',v:'Flèche V',tri:'Triangle',vline:'Ligne │',hline:'Ligne ─',diag:'Diagonale',free:'✎ Libre',f_t:'Marteau',f_u:'Fer à cheval',f_w:'Escalier',f_z:'Éclair',f_p:'Drapeau',f_l:'Botte',f_v:'Coin',f_y:'Lettre Y',f_n:'Serpent',f_f:'Lettre F',h_mini:'Mini cœur',h_line:'Cœur contour',h_fill:'Cœur plein',h_big:'Grand cœur plein',h_bigline:'Grand cœur contour'},
- refs:{neighbor:'Sur un voisin',leader:'Sur le chef'},
+ refs:{neighbor:'Sur un voisin',leader:'Sur le point de départ'},
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
  pixelPatterns:"Pixel art patterns",compactPatterns:"Eight-point pixel art patterns",largePatternLibrary:"Detailed large formations",patternSize:n=>`${n} tiles`,morePatterns:"Animals and kawaii patterns",militaryPatterns:"Military patterns",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet",miniPatterns:"Objects and small symbols",pixelNames:{"artWord":"ART3", "cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},
- squadOfEight:"Create an 8-person arrow",squadCount:n=>`1 leader and ${n} teammates`,
- languageLabel:"Language",autoLanguage:"Auto",rankLabel:"Leader rank",namesPh:"Alpha\nBravo\nCharlie",
+ squadOfEight:"Create an 8-person arrow",squadCount:n=>`${n+1} teammates ready to play`,
+ languageLabel:"Language",autoLanguage:"Auto",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Squad formations · Last War — RokenS ART3",
  title:"Squad formations",
- sub:"Last War · RokenS ART3 — the leader takes position, every teammate gets simple directions.",
- setup:"Your squad",leaderL:"Squad leader and rank",leaderPh:"Leader name",
- shapeL:"Shape to draw",nL:"Total squad size (leader included)",
+ sub:"Last War · RokenS ART3 — the starting teammate takes position, every teammate gets simple directions.",
+ setup:"Your team",leaderL:"Starting teammate",leaderPh:"Starting teammate name",
+ shapeL:"Shape to draw",nL:"Number of teammates",
  freeL:"Free drawing",gMinus:"Grid −",gPlus:"Grid +",
  namesL:"Teammate names (one per line, optional)",refL:"How does everyone find their spot?",
  rot:"↻ Rotate",mir:"⇋ Mirror",edit:"✎ Edit this shape",reset:"Reset",
  mapH:"The shape on the map",tabMake:"Create",tabHelp:"How does it work?",goMake:"Create my squad",helpLead:"Create a squad led by a squad leader and form a group of teammates attached to them, then give each one their position simply.",help:[
-  "<b>Pick your leader</b> (name + rank): they take position first, on the ★ cell in the center.",
+  "<b>Pick your starting teammate</b> (name): they take position first, on the ★ cell in the center.",
   "<b>Pick a shape</b>: cross, circle, heart… Only shapes that work with your number of teammates are shown (try 4, 8, 12…).",
   "<b>Set the number of teammates</b> and type their names (one per line, optional).",
   "<b>Read the map</b>: each numbered tile is a teammate. Select a teammate, then an empty tile to move them. Dotted lines show who they line up with.",
   "<b>Read the cards</b>: for example “1 cell above RokenS” with the arrow ↑1. ↑2 →1 means 2 cells up, then 1 cell right. Directions are the ones on the game screen.",
   "<b>Share the plan</b>: tap “Copy plan” and paste it in the alliance chat. The leader goes first, then everyone in number order.",
   "<b>Want your own shape?</b> Pick ✎ Free (or “Edit this shape”), then tap cells on the grid. ↻ Rotate and ⇋ Mirror turn or flip any shape."
- ],funL:"Fun shapes · 5 cells (leader + 4)",fixedInfo:t=>`Fixed shape: ${t} cells, the leader + ${t-1} teammates. Rotate or flip it as you like.`,heartL:"Hearts · fixed size",shapesHint:"Only shapes that fit your number of teammates are shown. Try 4, 8, 12… to see more.",copy:"Copy plan",
+ ],funL:"Fun shapes · 5 cells (leader + 4)",fixedInfo:t=>`Fixed shape: ${t} cells, the starting teammate + ${t-1} teammates. Rotate or flip it as you like.`,heartL:"Hearts · fixed size",shapesHint:"Only shapes that fit your number of teammates are shown. Try 4, 8, 12… to see more.",copy:"Copy plan",
  planHint:"Directions are the ones you see on the game screen. The leader takes position first, then everyone in number order.",
  planBox:"Show the text to paste into the alliance chat",
  hintFree:"Select a teammate, then choose an empty tile to move them.",
  hintMap:"Select a teammate on the map or in the list to move them.",
  movePosition:"Choose an empty tile to move",
  cancelPosition:"Cancel",
- refNeighbor:"The first teammate uses the leader, then each teammate uses the closest teammate already in place.",
- refLeader:"Everyone lines up with the leader only.",
+ refNeighbor:"The first teammate uses the starting teammate, then each teammate uses the closest teammate already in place.",
+ refLeader:"Everyone lines up with the starting teammate only.",
  chefIns:"Takes position first, at the center of the shape.",
  none:"No teammates yet: add cells on the map.",
  toastOk:"Plan copied ✔",toastManual:"Select the text and copy it",
- chef:"Leader",defName:i=>"Teammate "+i,
+ chef:"Starting teammate",defName:i=>"Teammate "+i,
  planH:n=>`Directions · ${n} teammate${n>1?'s':''}`,
  nameInfo:(k,t)=>`${k} name${k>1?'s':''} for ${t} spot${t>1?'s':''}.`+(k>t?` ${k-t} too many.`:'')+(k<t?' The others are called "Teammate N".':''),
  fit:k=>"Match to "+k,
- planHead:(s,name,rank,n)=>`🎖️ ${s} formation — ${name} (${rank}) + ${n} teammates`,
+ planHead:(s,name,n)=>`🎉 ${s} formation — ${name} + ${n} teammates`,
  planFirst:name=>`1. ${name} takes position first (center)`,
- planFoot:"(directions as seen on the game screen · RokenS ART3)",rankFallback:"leader",
+ planFoot:"(directions as seen on the game screen · RokenS ART3)",
  shapes:{cross:'Cross +',x:'Cross X',star:'Star',block:'Block',square:'Hollow square',circle:'Circle',diamond:'Diamond',v:'V arrow',tri:'Triangle',vline:'Line │',hline:'Line ─',diag:'Diagonal',free:'✎ Free',f_t:'Hammer',f_u:'Horseshoe',f_w:'Stairs',f_z:'Lightning',f_p:'Flag',f_l:'Boot',f_v:'Corner',f_y:'Letter Y',f_n:'Snake',f_f:'Letter F',h_mini:'Mini heart',h_line:'Heart outline',h_fill:'Solid heart',h_big:'Big solid heart',h_bigline:'Big heart outline'},
- refs:{neighbor:'Relative to a neighbor',leader:'Relative to the leader'},
+ refs:{neighbor:'Relative to a neighbor',leader:'Relative to the starting teammate'},
  desc:(dx,dy,ref)=>{
   const ax=Math.abs(dx),ay=Math.abs(dy),c=k=>k+(k>1?' cells':' cell');
   if(!dx&&!dy)return 'on '+ref;
@@ -628,45 +626,45 @@ en:{
 },
 ja:{
  pixelPatterns:"ドット絵",compactPatterns:"8マスのドット絵",largePatternLibrary:"大人数向けの細かいドット絵",patternSize:n=>`${n}マス`,morePatterns:"動物とかわいいドット絵",militaryPatterns:"ミリタリーのドット絵",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット",miniPatterns:"小物と記号",pixelNames:{"artWord":"ART3", "cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},
- squadOfEight:"8人で矢印を作る",squadCount:n=>`リーダー1人とメンバー${n}人`,
- languageLabel:"表示言語",autoLanguage:"自動",rankLabel:"リーダーのランク",namesPh:"さくら\nタケシ\n青空",
+ squadOfEight:"8人で矢印を作る",squadCount:n=>`${n+1}人の仲間で楽しもう`,
+ languageLabel:"表示言語",autoLanguage:"自動",namesPh:"さくら\nタケシ\n青空",
  docTitle:"部隊フォーメーション · Last War — RokenS ART3",
  title:"部隊フォーメーション",
- sub:"Last War · RokenS ART3 — リーダーを中心に、各メンバーの配置を決められます。",
- setup:"部隊の設定",leaderL:"部隊リーダーとランク",leaderPh:"リーダー名",
- shapeL:"作る形",nL:"部隊の人数（リーダーを含む）",
+ sub:"Last War · RokenS ART3 — スタート役の仲間を中心に、各メンバーの配置を決められます。",
+ setup:"部隊の設定",leaderL:"最初に配置する仲間",leaderPh:"最初の仲間の名前",
+ shapeL:"作る形",nL:"チームの人数",
  freeL:"自由描画",gMinus:"グリッド −",gPlus:"グリッド +",
  namesL:"メンバー名（1行に1人、任意）",refL:"各自の位置の基準は？",
  rot:"↻ 回転",mir:"⇋ 反転",edit:"✎ この形を編集",reset:"リセット",
- mapH:"配置マップ",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊リーダーが率いる部隊を作り、リーダーに付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
-  "<b>リーダーを決める</b>（名前とランク）：最初に、中央の★のマスに配置します。",
+ mapH:"配置マップ",tabMake:"作成",tabHelp:"使い方",goMake:"部隊を作る",helpLead:"部隊スタート役の仲間が率いる部隊を作り、スタート役の仲間に付くメンバーのグループを編成します。各メンバーには、位置をわかりやすく伝えられます。",help:[
+  "<b>スタート役の仲間を決める</b>（名前）：最初に、中央の★のマスに配置します。",
   "<b>形を選ぶ</b>：十字、円、ハートなど。メンバー数に合う形だけが表示されます（4、8、12人などを試してください）。",
   "<b>メンバー数を設定</b>し、名前を入力します（1行に1人、任意）。",
   "<b>マップを見る</b>：番号つきのマスが各メンバーです。移動するにはメンバーを選んでから空きマスを選びます。点線は、その人が基準にする相手を示します。",
   "<b>カードを見る</b>：たとえば「RokenSの1マス上」と矢印 ↑1。↑2 →1 は上に2マス、次に右に1マス進むという意味です。方向はゲーム画面で見えるとおりです。",
-  "<b>プランを共有</b>：「プランをコピー」を押して同盟チャットに貼り付けます。リーダーが先、その後は番号順です。",
+  "<b>プランを共有</b>：「プランをコピー」を押して同盟チャットに貼り付けます。スタート役の仲間が先、その後は番号順です。",
   "<b>自分だけの形を作りたい？</b> ✎ 自由（または「この形を編集」）を選び、グリッドのマスをタップします。↻ 回転と ⇋ 反転で、どの形も向きを変えられます。"
- ],funL:"おもしろ図形 · 5マス（リーダー＋4人）",fixedInfo:t=>`固定の形：${t}マス（リーダー＋メンバー${t-1}人）。回転・反転できます。`,heartL:"ハート · サイズ固定",shapesHint:"メンバー数に合う形だけを表示しています。4、8、12…人にすると他の形も出ます。",copy:"プランをコピー",
- planHint:"方向はゲーム画面で見えるとおりです。リーダーが最初に配置し、その後は番号順です。",
+ ],funL:"おもしろ図形 · 5マス（スタート役の仲間＋4人）",fixedInfo:t=>`固定の形：${t}マス（スタート役の仲間＋メンバー${t-1}人）。回転・反転できます。`,heartL:"ハート · サイズ固定",shapesHint:"メンバー数に合う形だけを表示しています。4、8、12…人にすると他の形も出ます。",copy:"プランをコピー",
+ planHint:"方向はゲーム画面で見えるとおりです。スタート役の仲間が最初に配置し、その後は番号順です。",
  planBox:"同盟チャットに貼り付けるテキストを表示",
  hintFree:"メンバーを選び、移動先の空きマスを選択してください。",
  hintMap:"マップまたは一覧でメンバーを選ぶと移動できます。",
  movePosition:"移動先の空きマスを選択",
  cancelPosition:"キャンセル",
- refNeighbor:"最初のメンバーはリーダーを基準にし、以降は配置済みのメンバーのうち最も近い人を目印にします。",
- refLeader:"全員がリーダーだけを基準にします。",
+ refNeighbor:"最初のメンバーはスタート役の仲間を基準にし、以降は配置済みのメンバーのうち最も近い人を目印にします。",
+ refLeader:"全員がスタート役の仲間だけを基準にします。",
  chefIns:"最初に、形の中央に配置します。",
  none:"メンバーがいません。マップ上でマスを追加してください。",
  toastOk:"コピーしました ✔",toastManual:"テキストを選択してコピーしてください",
- chef:"リーダー",defName:i=>"メンバー"+i,
+ chef:"スタート役の仲間",defName:i=>"メンバー"+i,
  planH:n=>`配置指示（メンバー${n}人）`,
  nameInfo:(k,t)=>`${k}件の名前 / ${t}枠。`+(k>t?` ${k-t}件が余っています。`:'')+(k<t?' 残りは「メンバーN」になります。':''),
  fit:k=>`${k}人に合わせる`,
- planHead:(s,name,rank,n)=>`🎖️ フォーメーション「${s}」 — ${name}（${rank}）＋メンバー${n}人`,
+ planHead:(s,name,n)=>`🎉 フォーメーション「${s}」 — ${name}＋メンバー${n}人`,
  planFirst:name=>`1. ${name}：最初に中央のマスへ`,
- planFoot:"（方向はゲーム画面上のもの · RokenS ART3）",rankFallback:"リーダー",
+ planFoot:"（方向はゲーム画面上のもの · RokenS ART3）",
  shapes:{cross:'十字 +',x:'X字',star:'星',block:'ブロック',square:'四角（枠）',circle:'円',diamond:'ひし形',v:'V字',tri:'三角',vline:'縦線 │',hline:'横線 ─',diag:'斜め線',free:'✎ 自由',f_t:'ハンマー',f_u:'馬蹄',f_w:'階段',f_z:'稲妻',f_p:'旗',f_l:'ブーツ',f_v:'角',f_y:'Y字',f_n:'ヘビ',f_f:'F字',h_mini:'ミニハート',h_line:'ハート（輪郭）',h_fill:'ハート（塗り）',h_big:'大きなハート（塗り）',h_bigline:'大きなハート（輪郭）'},
- refs:{neighbor:'隣のメンバー基準',leader:'リーダー基準'},
+ refs:{neighbor:'隣のメンバー基準',leader:'スタート役の仲間基準'},
  desc:(dx,dy,ref)=>{
   const ax=Math.abs(dx),ay=Math.abs(dy);
   if(!dx&&!dy)return ref+'と同じ位置';
@@ -678,45 +676,45 @@ ja:{
 },
 id:{
  pixelPatterns:"Pola seni piksel",compactPatterns:"Pola seni piksel 8 petak",largePatternLibrary:"Formasi besar dengan detail",patternSize:n=>`${n} petak`,morePatterns:"Hewan dan pola kawaii",militaryPatterns:"Pola militer",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet",miniPatterns:"Benda dan simbol kecil",pixelNames:{"artWord":"ART3", "cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},
- squadOfEight:"Buat formasi panah 8 orang",squadCount:n=>`1 pemimpin dan ${n} anggota`,
- languageLabel:"Bahasa",autoLanguage:"Otomatis",rankLabel:"Pangkat pemimpin",namesPh:"Alpha\nBravo\nCharlie",
+ squadOfEight:"Buat formasi panah 8 orang",squadCount:n=>`${n+1} rekan siap bermain`,
+ languageLabel:"Bahasa",autoLanguage:"Otomatis",namesPh:"Alpha\nBravo\nCharlie",
  docTitle:"Formasi skuad · Last War — RokenS ART3",
  title:"Formasi skuad",
- sub:"Last War · RokenS ART3 — pemimpin menempati posisi lebih dulu, setiap anggota mendapat petunjuk sederhana.",
- setup:"Skuadmu",leaderL:"Pemimpin skuad dan pangkat",leaderPh:"Nama pemimpin",
- shapeL:"Bentuk yang dibuat",nL:"Jumlah orang (termasuk pemimpin)",
+ sub:"Last War · RokenS ART3 — rekan di titik awal menempati posisi lebih dulu, setiap anggota mendapat petunjuk sederhana.",
+ setup:"Skuadmu",leaderL:"Rekan di titik awal",leaderPh:"Nama rekan di titik awal",
+ shapeL:"Bentuk yang dibuat",nL:"Jumlah rekan satu tim",
  freeL:"Gambar bebas",gMinus:"Grid −",gPlus:"Grid +",
  namesL:"Nama anggota (satu per baris, opsional)",refL:"Patokan posisi tiap anggota?",
  rot:"↻ Putar",mir:"⇋ Cermin",edit:"✎ Ubah bentuk ini",reset:"Atur ulang",
- mapH:"Bentuk di peta",tabMake:"Buat",tabHelp:"Cara pakai",goMake:"Buat skuadku",helpLead:"Buat skuad yang dipimpin seorang pemimpin skuad, lalu bentuk kelompok anggota yang terikat padanya, dan beri setiap anggota posisinya dengan mudah.",help:[
-  "<b>Pilih pemimpin</b> (nama + pangkat): dia menempati posisi lebih dulu, di kotak ★ di tengah.",
+ mapH:"Bentuk di peta",tabMake:"Buat",tabHelp:"Cara pakai",goMake:"Buat skuadku",helpLead:"Buat skuad yang dipimpin seorang rekan di titik awal skuad, lalu bentuk kelompok anggota yang terikat padanya, dan beri setiap anggota posisinya dengan mudah.",help:[
+  "<b>Pilih rekan di titik awal</b> (nama): dia menempati posisi lebih dulu, di kotak ★ di tengah.",
   "<b>Pilih bentuk</b>: salib, lingkaran, hati… Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan (coba 4, 8, 12…).",
   "<b>Atur jumlah anggota</b> dan tulis nama mereka (satu per baris, opsional).",
   "<b>Baca peta</b>: setiap petak bernomor adalah satu anggota. Pilih anggota, lalu pilih petak kosong untuk memindahkannya. Garis putus-putus menunjukkan patokan mereka.",
   "<b>Baca kartunya</b>: misalnya “1 kotak di atas RokenS” dengan panah ↑1. ↑2 →1 berarti 2 kotak ke atas, lalu 1 kotak ke kanan. Arah sesuai layar game.",
-  "<b>Bagikan rencana</b>: ketuk “Salin rencana” lalu tempel di chat aliansi. Pemimpin lebih dulu, lalu semua sesuai nomor.",
+  "<b>Bagikan rencana</b>: ketuk “Salin rencana” lalu tempel di chat aliansi. Rekan di titik awal lebih dulu, lalu semua sesuai nomor.",
   "<b>Mau bentuk sendiri?</b> Pilih ✎ Bebas (atau “Ubah bentuk ini”), lalu ketuk kotak di grid. ↻ Putar dan ⇋ Cermin memutar atau membalik bentuk apa pun."
- ],funL:"Bentuk seru · 5 kotak (pemimpin + 4)",fixedInfo:t=>`Bentuk tetap: ${t} kotak, pemimpin + ${t-1} anggota. Putar atau balik sesuka hati.`,heartL:"Hati · ukuran tetap",shapesHint:"Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan. Coba 4, 8, 12… untuk melihat lainnya.",copy:"Salin rencana",
- planHint:"Arah sesuai yang terlihat di layar game. Pemimpin menempati posisi lebih dulu, lalu semua anggota sesuai nomor.",
+ ],funL:"Bentuk seru · 5 kotak (rekan di titik awal + 4)",fixedInfo:t=>`Bentuk tetap: ${t} kotak, rekan di titik awal + ${t-1} anggota. Putar atau balik sesuka hati.`,heartL:"Hati · ukuran tetap",shapesHint:"Hanya bentuk yang cocok dengan jumlah anggotamu yang ditampilkan. Coba 4, 8, 12… untuk melihat lainnya.",copy:"Salin rencana",
+ planHint:"Arah sesuai yang terlihat di layar game. Rekan di titik awal menempati posisi lebih dulu, lalu semua anggota sesuai nomor.",
  planBox:"Lihat teks untuk ditempel di chat aliansi",
  hintFree:"Pilih anggota, lalu pilih petak kosong untuk memindahkannya.",
  hintMap:"Pilih anggota di peta atau daftar untuk memindahkannya.",
  movePosition:"Pilih petak kosong untuk memindahkan",
  cancelPosition:"Batal",
- refNeighbor:"Anggota pertama berpatokan pada pemimpin, lalu setiap anggota berpatokan pada rekan terdekat yang sudah berada di posisinya.",
- refLeader:"Semua hanya berpatokan pada pemimpin.",
+ refNeighbor:"Anggota pertama berpatokan pada rekan di titik awal, lalu setiap anggota berpatokan pada rekan terdekat yang sudah berada di posisinya.",
+ refLeader:"Semua hanya berpatokan pada rekan di titik awal.",
  chefIns:"Menempati posisi pertama, di tengah bentuk.",
  none:"Belum ada anggota: tambahkan kotak di peta.",
  toastOk:"Rencana disalin ✔",toastManual:"Pilih teksnya lalu salin",
- chef:"Pemimpin",defName:i=>"Anggota "+i,
+ chef:"Rekan di titik awal",defName:i=>"Anggota "+i,
  planH:n=>`Petunjuk · ${n} anggota`,
  nameInfo:(k,t)=>`${k} nama untuk ${t} posisi.`+(k>t?` Kelebihan ${k-t} nama.`:'')+(k<t?' Sisanya bernama "Anggota N".':''),
  fit:k=>"Sesuaikan ke "+k,
- planHead:(s,name,rank,n)=>`🎖️ Formasi ${s} — ${name} (${rank}) + ${n} anggota`,
+ planHead:(s,name,n)=>`🎉 Formasi ${s} — ${name} + ${n} anggota`,
  planFirst:name=>`1. ${name} menempati posisi pertama (tengah)`,
- planFoot:"(arah sesuai layar game · RokenS ART3)",rankFallback:"pemimpin",
+ planFoot:"(arah sesuai layar game · RokenS ART3)",
  shapes:{cross:'Salib +',x:'Silang X',star:'Bintang',block:'Blok',square:'Persegi kosong',circle:'Lingkaran',diamond:'Belah ketupat',v:'Panah V',tri:'Segitiga',vline:'Garis │',hline:'Garis ─',diag:'Diagonal',free:'✎ Bebas',f_t:'Palu',f_u:'Tapal kuda',f_w:'Tangga',f_z:'Petir',f_p:'Bendera',f_l:'Sepatu bot',f_v:'Sudut',f_y:'Huruf Y',f_n:'Ular',f_f:'Huruf F',h_mini:'Hati mini',h_line:'Hati garis tepi',h_fill:'Hati penuh',h_big:'Hati besar penuh',h_bigline:'Hati besar garis tepi'},
- refs:{neighbor:'Dari tetangga',leader:'Dari pemimpin'},
+ refs:{neighbor:'Dari tetangga',leader:'Dari rekan di titik awal'},
  desc:(dx,dy,ref)=>{
   const ax=Math.abs(dx),ay=Math.abs(dy),c=k=>k+' kotak';
   if(!dx&&!dy)return 'di posisi '+ref;
@@ -775,7 +773,7 @@ function parsePat(rows){                       // X = coéquipier, C = chef
   rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='X')out.push([x-c[0],y-c[1]]);}));
   return out;
 }
-const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',rank:'R4',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1};
+const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1};
 for(const k in HEART_ASCII)GEN[k]=()=>parsePat(HEART_ASCII[k]);
 const RULE={   // n = nombre de coéquipiers ; une forme n'est proposée que si elle est complète et symétrique
   cross:n=>n>=4&&n%4===0, x:n=>n>=4&&n%4===0, star:n=>n>=8&&n%8===0,
@@ -839,7 +837,7 @@ function buildPlan(){
 }
 function planText(plan){
   const l=L();
-  let t=l.planHead(l.shapes[cur()],plan.chef.name,S.rank||l.rankFallback,plan.members.length)+'\n';
+  let t=l.planHead(l.shapes[cur()],plan.chef.name,plan.members.length)+'\n';
   t+=l.planFirst(plan.chef.name)+'\n';
   plan.members.forEach((m,k)=>{t+=`${k+2}. ${m.name} : ${m.text} [${m.sig}]\n`;});
   return t+l.planFoot;
@@ -908,7 +906,7 @@ function renderMap(plan){
     const fs=m.i>=99?11:15;
     o+=`<g class="mb${S.sel===m.i?' on':''}" data-i="${m.i}" data-x="${m.x}" data-y="${m.y}"><path class="token" transform="translate(${X(m.x)},${Y(m.y)})" d="M8 4h24v4h4v24h-4v4H8v-4H4V8h4z"/><path class="shine" transform="translate(${X(m.x)},${Y(m.y)})" d="M9 7h22v2H9z"/><text x="${cx(m.x)}" y="${cy(m.y)}" style="font-size:${fs}px">${m.i+1}</text></g>`;
   }
-  o+=`<g class="chef"><path class="token" transform="translate(${X(0)},${Y(0)})" d="M8 3h24v5h5v24h-5v5H8v-5H3V8h5z"/><path transform="translate(${X(0)},${Y(0)})" fill="#241a00" shape-rendering="crispEdges" d="M18 7h4v4h8v4h-4v8h-4v-4h-4v4h-4v-8h-4v-4h8z"/><text class="rk" x="${cx(0)}" y="${cy(0)+11}">${esc(S.rank||'')}</text></g>`;
+  o+=`<g class="chef"><path class="token" transform="translate(${X(0)},${Y(0)})" d="M8 3h24v5h5v24h-5v5H8v-5H3V8h5z"/><path transform="translate(${X(0)},${Y(0)})" fill="#241a00" shape-rendering="crispEdges" d="M18 7h4v4h8v4h-4v8h-4v-4h-4v4h-4v-8h-4v-4h8z"/></g>`;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   svg.style.maxWidth=Math.max(W*2.2,280)+'px';
   svg.classList.toggle('free',free);
@@ -939,7 +937,7 @@ function renderPixelPatterns(){
 function renderCards(plan){
   const n=plan.members.length;
   $('planTitle').textContent=L().planH(n);
-  let h=`<div class="card chef"><span class="badge">★</span><span class="body"><b>${esc(plan.chef.name)}${S.rank?' ('+esc(S.rank)+')':''}</b><span class="ins">${esc(L().chefIns)}</span></span></div>`;
+  let h=`<div class="card chef"><span class="badge">★</span><span class="body"><b>${esc(plan.chef.name)}</b><span class="ins">${esc(L().chefIns)}</span></span></div>`;
   if(!n)h+=`<p class="hint">${esc(L().none)}</p>`;
   for(const m of plan.members){
     h+=`<button type="button" class="card${S.sel===m.i?' on':''}" aria-pressed="${S.sel===m.i}" id="c${m.i}" data-i="${m.i}"><span class="badge">${m.i+1}</span><span class="body"><b>${esc(m.name)}</b><span class="ins">${esc(m.text)}</span></span><span class="sig">${esc(m.sig)}</span></button>`;
@@ -988,7 +986,6 @@ function load(){
     const r=JSON.parse(localStorage.getItem(KEY)||'null');
     if(!r||typeof r!=='object')return;
     if(typeof r.leader==='string')S.leader=r.leader.slice(0,40);
-    if(typeof r.rank==='string')S.rank=r.rank.slice(0,6);
     if(SHAPES.some(s=>s.id===r.shape))S.shape=r.shape;
     S.n=Math.max(1,Math.min(500,Math.round(+r.n)||S.n));
     if(typeof r.names==='string')S.names=r.names.slice(0,20000);
@@ -1025,7 +1022,7 @@ function init(){
   applyCamouflageTexture();
   S.lang=detectLang();
   load();
-  $('leader').value=S.leader;$('rank').value=S.rank;$('names').value=S.names;
+  $('leader').value=S.leader;$('names').value=S.names;
   const setTab=t=>{
     S.tab=t;$('viewMake').hidden=t!=='make';$('viewHelp').hidden=t!=='help';
     $('tabMake').setAttribute('aria-selected',String(t==='make'));$('tabHelp').setAttribute('aria-selected',String(t==='help'));
@@ -1034,12 +1031,11 @@ function init(){
   $('tabMake').onclick=()=>setTab('make');$('tabHelp').onclick=()=>setTab('help');$('goMake').onclick=()=>setTab('make');
   setTab('make');
   $('leader').addEventListener('input',e=>{S.leader=e.target.value;render();});
-  $('rank').addEventListener('input',e=>{S.rank=e.target.value;render();});
   $('names').addEventListener('input',e=>{S.names=e.target.value;render();});
   const resizeFree=count=>{
     const extra=count-S.free.length;
     if(extra>0){
-      // An 11×11 grid offers 120 slots around the leader.
+      // An 11×11 grid offers 120 slots around the starting teammate.
       const occupied=new Set(S.free.map(cell=>cell.join(',')));
       const open=sortCells(cellsWhere((x,y)=>!occupied.has(`${x},${y}`),5));
       S.free.push(...open.slice(0,extra));
@@ -1119,7 +1115,7 @@ function init(){
   };
   $('gMinus').onclick=()=>{S.freeR=Math.max(3,S.freeR-1);render();};
   $('gPlus').onclick=()=>{S.freeR=Math.min(40,S.freeR+1);render();};
-  $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',rank:'R4',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1});$('leader').value=S.leader;$('rank').value=S.rank;$('names').value='';render();};
+  $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1});$('leader').value=S.leader;$('names').value='';render();};
   $('copy').onclick=copyPlan;
   $('cancelPosition').onclick=()=>{S.sel=-1;render();};
   $('map').addEventListener('click',e=>{
