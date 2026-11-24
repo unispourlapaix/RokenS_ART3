@@ -169,6 +169,10 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
 .pixel-preview span{width:var(--pattern-pixel,5px);height:var(--pattern-pixel,5px);background:var(--map-tile)}
 .pixel-preview .member{background:#c5774d}
 .pixel-preview .leader{background:#ffdb8e}
+#smallPatterns{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:8px 0 12px}
+#smallPatterns .pixel-pattern{display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:116px;padding:12px 6px;text-align:center}
+#smallPatterns .pixel-preview{gap:2px;padding:6px;min-height:56px;align-content:center}
+#smallPatterns .pixel-preview span{width:var(--pattern-pixel,9px);height:var(--pattern-pixel,9px)}
 </style>
 </head>
 <body>
@@ -208,14 +212,11 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         <div class="chips" id="shapes"></div>
         <p class="hint" id="shapesHint" data-t="shapesHint"></p>
         <label class="lbl" for="n" data-t="nL">Nombre de coéquipiers</label>
-        <select id="n" aria-describedby="squadCount">
-          <option value="8" selected>8</option>
-          <option value="7">7</option>
-          <option value="14">14</option>
-          <option value="28">28</option>
-          <option value="56">56</option>
-          <option value="100">100</option>
-        </select>
+        <div class="chips" id="quickSizes" role="group" data-ta="nL">
+          <button type="button" class="chip" data-size="8">8</button>
+          <button type="button" class="chip" data-size="12">12</button>
+        </div>
+        <input id="n" type="number" min="1" max="100" value="8" inputmode="numeric" aria-describedby="squadCount">
         <p class="hint" id="squadCount">8 coéquipiers prêts à jouer</p>
 
         <div id="freeTools" hidden>
@@ -250,6 +251,8 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
         <div id="pixelPatterns" role="group" data-ta="pixelPatterns">
           <p class="hint" data-t="compactPatterns">Motifs pixel art de 8 points</p>
           <div class="pixel-patterns" id="smallPatterns"></div>
+          <details class="pixel-library">
+            <summary data-t="otherModels">Autres modèles</summary>
           <details class="pixel-library">
             <summary data-t="largePatternLibrary">Grandes formations détaillées</summary>
             <section aria-labelledby="patternsHeading14">
@@ -293,6 +296,12 @@ html[lang="ja"] :is(.chip,.tab){min-height:44px}
             <summary data-t="militaryPatterns">Motifs militaires</summary>
             <div class="pixel-patterns" id="militaryPatterns"></div>
           </details>
+          </details>
+        </div>
+        <div class="wrapbtn" id="gridModes">
+          <button type="button" class="btn" id="drawPixels" data-t="drawPixels" aria-pressed="true"></button>
+          <button type="button" class="btn" id="movePixels" data-t="movePixels" aria-pressed="false"></button>
+          <button type="button" class="btn" id="clearPixels" data-t="clearPixels"></button>
         </div>
         <div class="mapbox"><svg id="map" role="group" aria-labelledby="mapHint"></svg></div>
         <p class="hint" id="mapHint" aria-live="polite"></p>
@@ -347,23 +356,23 @@ const HEARTS=['h_mini','h_line','h_fill','h_big','h_bigline'];   // cœurs dessi
 const FIXED=new Set([...FUN,...HEARTS]);
 const REFS=[{id:'neighbor',label:'Sur un voisin'},{id:'leader',label:'Sur le point de départ'}];
 const KEY='rokens-arte-last-war-v1';
-const SQUAD_SIZES=[7,8,14,28,56,100];
+const SQUAD_SIZES=[7,8,12,14,28,56,100];
 const tierFor=count=>SQUAD_SIZES.find(size=>size>=count+1)??SQUAD_SIZES.at(-1);
 const STARTER_PATTERNS={
-  arrow8:['..X..','.XXX.','..C..','..X..','..X..','..X..'],
+  arrow8:['....X.','XXXCXX','....X.'],
   heart8:['.X.X.','X.C.X','.X.X.','..X..'],
+  cat:['X.X','XCX','XXX'],
+  bunny:['X.X','X.X','XCX','.X.'],
+  bear:['XX.XX','X.C.X','..X..'],
+  paw:['X.X.X.X','..XCX..','...X...'],
+  flower:['.XX.','XCXX','.X..','.X..'],
+  ghost:['.XX.','X..X','XCX.','X...'],
 };
 const KAWAII_PATTERNS={
-  cat:['X.X.','XCX.','.X.X','..X.'],
-  bunny:['.X.X.','.X.X.','.XCX.','..X..'],
-  bear:['X...X','.XCX.','.XXX.'],
-  paw:['X.X.X.','.XCXX.','..X...'],
   heart:['XX.XX','.XCX.','..X..'],
   mushroom:['.XXX.','XXCXX'],
-  ghost:['.XXX.','.XCX.','.X.X.'],
   chick:['..XX.','..XX.','.XCXX'],
   frog:['X...X','.XXX.','X.C.X'],
-  flower:['..X..','.XCX.','..X..','.XXX.'],
   onigiri:['..X..','.XXX.','X.CX.','..X..'],
   strawberry:['.X.X.','.XXX.','.CX..','..X..'],
   fish:['.XX..','XXCXX','.X...'],
@@ -532,6 +541,7 @@ function detectLang(){
 }
 const I18N={
 fr:{
+ otherModels:"Autres modèles",drawPixels:"Dessiner",movePixels:"Déplacer",clearPixels:"Vider le dessin",drawingHint:"Touchez une case libre pour ajouter un pixel, ou un pixel pour le retirer. Chaque pixel représente un coéquipier (100 au total maximum). La case ★ est le point de départ.",
  pixelPatterns:"Motifs pixel art",compactPatterns:"Motifs pixel art de 8 points",largePatternLibrary:"Grandes formations détaillées",patternSize:n=>`${n} cases`,morePatterns:"Animaux et motifs kawaii",militaryPatterns:"Motifs militaires",symbolPatterns:"Émoticônes et symboles",buildingPatterns:"Médiéval et bâtiments",letterPatterns:"Alphabet",miniPatterns:"Objets et petits symboles",pixelNames:{"artWord":"ART3", "cat": "Chat", "bunny": "Lapin", "bear": "Ourson", "paw": "Patte", "heart": "Cœur", "mushroom": "Champignon", "ghost": "Fantôme", "chick": "Poussin", "frog": "Grenouille", "flower": "Fleur", "onigiri": "Onigiri", "strawberry": "Fraise", "fish": "Poisson", "catFace": "Tête de chat", "penguin": "Pingouin", "octopus": "Pieuvre", "bearFace": "Tête d’ourson", "chainsaw": "Tronçonneuse", "missile": "Missile", "tank": "Char à canon", "plane": "Avion", "grenade": "Grenade", "helicopter": "Hélicoptère", "smile": "Sourire", "wink": "Clin d’œil", "heartEyes": "Yeux en cœur", "pacman": "Pac-Man", "heartOutline": "Contour de cœur", "heartFull": "Cœur plein", "doubleHeart": "Deux cœurs", "fivePointStar": "Étoile à cinq branches", "arrow": "Flèche", "medievalSword": "Épée médiévale", "crossedSwords": "Épées croisées", "house": "Maison", "cityscape": "Ville", "miniMushroom": "Champignon", "miniGhost": "Fantôme", "miniFish": "Poisson", "miniArrow": "Flèche", "miniFlower": "Fleur", "miniCrown": "Couronne", "miniSailboat": "Voilier", "miniRocket": "Fusée", "miniBow": "Nœud papillon", "miniNote": "Note de musique", "miniHouse": "Maison", "miniSword": "Épée"},
  squadOfEight:"Créer une flèche de 8",squadCount:n=>`${n+1} coéquipiers prêts à jouer`,
  languageLabel:"Langue",autoLanguage:"Auto",namesPh:"Alpha\nBravo\nCharlie",
@@ -575,6 +585,7 @@ fr:{
  desc:(dx,dy,ref)=>describe(dx,dy,ref)
 },
 en:{
+ otherModels:"Other templates",drawPixels:"Draw",movePixels:"Move",clearPixels:"Clear drawing",drawingHint:"Tap an empty tile to add a pixel, or a pixel to remove it. Each pixel is a teammate (100 total maximum). The ★ tile is the starting point.",
  pixelPatterns:"Pixel art patterns",compactPatterns:"Eight-point pixel art patterns",largePatternLibrary:"Detailed large formations",patternSize:n=>`${n} tiles`,morePatterns:"Animals and kawaii patterns",militaryPatterns:"Military patterns",symbolPatterns:"Emoticons and symbols",buildingPatterns:"Medieval and buildings",letterPatterns:"Alphabet",miniPatterns:"Objects and small symbols",pixelNames:{"artWord":"ART3", "cat": "Cat", "bunny": "Bunny", "bear": "Bear", "paw": "Paw", "heart": "Heart", "mushroom": "Mushroom", "ghost": "Ghost", "chick": "Chick", "frog": "Frog", "flower": "Flower", "onigiri": "Onigiri", "strawberry": "Strawberry", "fish": "Fish", "catFace": "Cat face", "penguin": "Penguin", "octopus": "Octopus", "bearFace": "Bear face", "chainsaw": "Chainsaw", "missile": "Missile", "tank": "Tank with cannon", "plane": "Airplane", "grenade": "Grenade", "helicopter": "Helicopter", "smile": "Smile", "wink": "Wink", "heartEyes": "Heart eyes", "pacman": "Pac-Man", "heartOutline": "Heart outline", "heartFull": "Solid heart", "doubleHeart": "Double heart", "fivePointStar": "Five-pointed star", "arrow": "Arrow", "medievalSword": "Medieval sword", "crossedSwords": "Crossed swords", "house": "House", "cityscape": "City skyline", "miniMushroom": "Mushroom", "miniGhost": "Ghost", "miniFish": "Fish", "miniArrow": "Arrow", "miniFlower": "Flower", "miniCrown": "Crown", "miniSailboat": "Sailboat", "miniRocket": "Rocket", "miniBow": "Bow", "miniNote": "Music note", "miniHouse": "House", "miniSword": "Sword"},
  squadOfEight:"Create an 8-person arrow",squadCount:n=>`${n+1} teammates ready to play`,
  languageLabel:"Language",autoLanguage:"Auto",namesPh:"Alpha\nBravo\nCharlie",
@@ -625,6 +636,7 @@ en:{
  }
 },
 ja:{
+ otherModels:"ほかのモデル",drawPixels:"描く",movePixels:"移動",clearPixels:"絵を消す",drawingHint:"空きマスをタップすると追加、配置済みのマスをタップすると削除できます。1マスが仲間1人です（合計100人まで）。★はスタート地点です。",
  pixelPatterns:"ドット絵",compactPatterns:"8マスのドット絵",largePatternLibrary:"大人数向けの細かいドット絵",patternSize:n=>`${n}マス`,morePatterns:"動物とかわいいドット絵",militaryPatterns:"ミリタリーのドット絵",symbolPatterns:"顔文字・記号",buildingPatterns:"中世・建物",letterPatterns:"アルファベット",miniPatterns:"小物と記号",pixelNames:{"artWord":"ART3", "cat": "ねこ", "bunny": "うさぎ", "bear": "くま", "paw": "肉球", "heart": "ハート", "mushroom": "きのこ", "ghost": "おばけ", "chick": "ひよこ", "frog": "かえる", "flower": "花", "onigiri": "おにぎり", "strawberry": "いちご", "fish": "さかな", "catFace": "ねこの顔", "penguin": "ペンギン", "octopus": "たこ", "bearFace": "くまの顔", "chainsaw": "チェーンソー", "missile": "ミサイル", "tank": "主砲付き戦車", "plane": "飛行機", "grenade": "手榴弾", "helicopter": "ヘリコプター", "smile": "笑顔", "wink": "ウインク", "heartEyes": "ハートの目", "pacman": "パックマン", "heartOutline": "ハートの輪郭", "heartFull": "塗りつぶしハート", "doubleHeart": "ダブルハート", "fivePointStar": "五芒星", "arrow": "矢印", "medievalSword": "中世の剣", "crossedSwords": "交差した剣", "house": "家", "cityscape": "街並み", "miniMushroom": "きのこ", "miniGhost": "おばけ", "miniFish": "さかな", "miniArrow": "矢印", "miniFlower": "花", "miniCrown": "王冠", "miniSailboat": "ヨット", "miniRocket": "ロケット", "miniBow": "リボン", "miniNote": "音符", "miniHouse": "家", "miniSword": "剣"},
  squadOfEight:"8人で矢印を作る",squadCount:n=>`${n+1}人の仲間で楽しもう`,
  languageLabel:"表示言語",autoLanguage:"自動",namesPh:"さくら\nタケシ\n青空",
@@ -675,6 +687,7 @@ ja:{
  }
 },
 id:{
+ otherModels:"Model lainnya",drawPixels:"Gambar",movePixels:"Pindahkan",clearPixels:"Kosongkan gambar",drawingHint:"Ketuk petak kosong untuk menambah piksel atau piksel untuk menghapusnya. Setiap piksel adalah satu rekan (maksimal 100 orang). ★ adalah titik awal.",
  pixelPatterns:"Pola seni piksel",compactPatterns:"Pola seni piksel 8 petak",largePatternLibrary:"Formasi besar dengan detail",patternSize:n=>`${n} petak`,morePatterns:"Hewan dan pola kawaii",militaryPatterns:"Pola militer",symbolPatterns:"Emotikon dan simbol",buildingPatterns:"Abad pertengahan dan bangunan",letterPatterns:"Alfabet",miniPatterns:"Benda dan simbol kecil",pixelNames:{"artWord":"ART3", "cat": "Kucing", "bunny": "Kelinci", "bear": "Beruang", "paw": "Jejak kaki", "heart": "Hati", "mushroom": "Jamur", "ghost": "Hantu", "chick": "Anak ayam", "frog": "Katak", "flower": "Bunga", "onigiri": "Onigiri", "strawberry": "Stroberi", "fish": "Ikan", "catFace": "Wajah kucing", "penguin": "Penguin", "octopus": "Gurita", "bearFace": "Wajah beruang", "chainsaw": "Gergaji mesin", "missile": "Rudal", "tank": "Tank bermeriam", "plane": "Pesawat", "grenade": "Granat", "helicopter": "Helikopter", "smile": "Senyum", "wink": "Kedipan", "heartEyes": "Mata hati", "pacman": "Pac-Man", "heartOutline": "Garis hati", "heartFull": "Hati penuh", "doubleHeart": "Dua hati", "fivePointStar": "Bintang lima sudut", "arrow": "Panah", "medievalSword": "Pedang abad pertengahan", "crossedSwords": "Pedang bersilang", "house": "Rumah", "cityscape": "Kota", "miniMushroom": "Jamur", "miniGhost": "Hantu", "miniFish": "Ikan", "miniArrow": "Panah", "miniFlower": "Bunga", "miniCrown": "Mahkota", "miniSailboat": "Perahu layar", "miniRocket": "Roket", "miniBow": "Pita", "miniNote": "Not musik", "miniHouse": "Rumah", "miniSword": "Pedang"},
  squadOfEight:"Buat formasi panah 8 orang",squadCount:n=>`${n+1} rekan siap bermain`,
  languageLabel:"Bahasa",autoLanguage:"Otomatis",namesPh:"Alpha\nBravo\nCharlie",
@@ -773,6 +786,7 @@ function parsePat(rows){                       // X = coéquipier, C = chef
   rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='X')out.push([x-c[0],y-c[1]]);}));
   return out;
 }
+let drawing=true;
 const S={lang:'fr',languageMode:'auto',tab:'make',leader:'RokenS',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1};
 for(const k in HEART_ASCII)GEN[k]=()=>parsePat(HEART_ASCII[k]);
 const RULE={   // n = nombre de coéquipiers ; une forme n'est proposée que si elle est complète et symétrique
@@ -913,7 +927,7 @@ function renderMap(plan){
   svg.innerHTML=o;
   const selected=plan.members[S.sel];
   svg.classList.toggle('placing',Boolean(selected));
-  $('mapHint').textContent=selected?`${L().movePosition} · ${selected.name}`:free?L().hintFree:L().hintMap;
+  $('mapHint').textContent=selected?`${L().movePosition} · ${selected.name}`:drawing?L().drawingHint:free?L().hintFree:L().hintMap;
   $('placementActions').hidden=!selected;
 }
 
@@ -928,7 +942,7 @@ function renderPixelPatterns(){
         return `<span class="${color}"></span>`;
       }).join('');
       const name=group==='letterPatterns'?id.slice('glyph-'.length):L().pixelNames[id.replace(/-?\d+$/,'')];
-      return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},var(--pattern-pixel));--pattern-pixel:${rows[0].length>16?4:5}px">${preview}</span><span>${name}</span></button>`;
+      return `<button type="button" class="btn pixel-pattern" data-pattern="${id}"><span class="pixel-preview" aria-hidden="true" style="grid-template-columns:repeat(${rows[0].length},var(--pattern-pixel));--pattern-pixel:${group==='smallPatterns'?9:rows[0].length>16?4:5}px">${preview}</span><span>${name}</span></button>`;
     }).join('');
   }
 }
@@ -961,6 +975,9 @@ function renderControls(plan){
   $('edit').hidden=free;
   const k=plan.names.length,total=plan.members.length;
   $('n').value=String(total+1);
+  $('quickSizes').querySelectorAll('[data-size]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(Number(button.dataset.size)===total+1));
+  });
   $('squadCount').textContent=l.squadCount(total);
   const fitSize=tierFor(k);
   $('nameInfo').innerHTML=(k?esc(l.nameInfo(k,total)):'')+(k&&fitSize!==total+1?' <button type="button" class="link" id="fitNames">'+esc(l.fit(fitSize-1))+'</button>':'');
@@ -1045,7 +1062,7 @@ function init(){
   };
   renderPixelPatterns();
   const initialCount=baseCells().length;
-  S.n=tierFor(initialCount)-1;
+  S.n=Math.min(99,initialCount);
   if(initialCount!==S.n&&(S.shape==='free'||FIXED.has(S.shape))){
     S.free=sortCellsIfPreset();
     S.shape='free';
@@ -1057,7 +1074,7 @@ function init(){
   }
 
   const setSize=size=>{
-    if(!SQUAD_SIZES.includes(size))return;
+    if(!Number.isInteger(size)||size<1||size>100)return;
     const count=size-1;
     if(FIXED.has(S.shape)){
       S.free=sortCellsIfPreset();
@@ -1077,6 +1094,10 @@ function init(){
     if(!button)return;
     Object.assign(S,pixelSquad(button.dataset.pattern),{sel:-1});
     render();
+  });
+  $('quickSizes').addEventListener('click',e=>{
+    const button=e.target.closest('[data-size]');
+    if(button)setSize(Number(button.dataset.size));
   });
   $('n').addEventListener('change',e=>setSize(Number(e.target.value)));
   $('shapes').addEventListener('click',e=>{
@@ -1104,7 +1125,7 @@ function init(){
     renderPixelPatterns();
     render();
   });
-  $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames')setSize(tierFor(buildPlan().names.length));});
+  $('nameInfo').addEventListener('click',e=>{if(e.target.id==='fitNames')setSize(Math.min(100,buildPlan().names.length+1));});
   $('rot').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-y,x]);else S.rot=(S.rot+1)%4;S.sel=-1;render();};
   $('mir').onclick=()=>{if(S.shape==='free')S.free=S.free.map(([x,y])=>[-x,y]);else S.mirror=!S.mirror;S.sel=-1;render();};
   $('edit').onclick=()=>{
@@ -1117,11 +1138,22 @@ function init(){
   $('gPlus').onclick=()=>{S.freeR=Math.min(40,S.freeR+1);render();};
   $('reset').onclick=()=>{Object.assign(S,{leader:'RokenS',...pixelSquad(),names:'',rot:0,mirror:false,ref:'neighbor',sel:-1});$('leader').value=S.leader;$('names').value='';render();};
   $('copy').onclick=copyPlan;
+  const setDrawing=value=>{
+    drawing=value;S.sel=-1;
+    $('drawPixels').setAttribute('aria-pressed',String(value));
+    $('movePixels').setAttribute('aria-pressed',String(!value));
+    render();
+  };
+  $('drawPixels').onclick=()=>setDrawing(true);
+  $('movePixels').onclick=()=>setDrawing(false);
+  $('clearPixels').onclick=()=>{
+    S.free=[];S.shape='free';S.n=0;setDrawing(true);
+  };
   $('cancelPosition').onclick=()=>{S.sel=-1;render();};
   $('map').addEventListener('click',e=>{
     const g=e.target.closest('[data-x]');
     if(!g)return;
-    if(g.dataset.i!==undefined){
+    if(!drawing&&g.dataset.i!==undefined){
       const i=+g.dataset.i;
       S.sel=S.sel===i?-1:i;
       render();
@@ -1130,6 +1162,14 @@ function init(){
     const x=+g.dataset.x,y=+g.dataset.y;
     if(!x&&!y)return;
     const cells=S.shape==='free'?S.free:sortCells(baseCells());
+    if(drawing){
+      const index=cells.findIndex(([cx,cy])=>cx===x&&cy===y);
+      if(index>=0)cells.splice(index,1);
+      else if(cells.length<99)cells.push([x,y]);
+      S.free=cells;S.shape='free';S.n=cells.length;S.sel=-1;
+      render();
+      return;
+    }
     if(cells.some(([cx,cy])=>cx===x&&cy===y))return;
     if(S.sel>=0){
       if(S.shape!=='free'){
